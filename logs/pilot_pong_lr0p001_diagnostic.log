@@ -1,0 +1,21 @@
+A.L.E: Arcade Learning Environment (version 0.12.1+8a8fafb)
+[Powered by Stella]
+{
+  "run": "runs/pilot_pong_lr0p001",
+  "diagnostic_seed_base": 91000000,
+  "episodes": 8,
+  "mean_action_entropy_nats": 0.6878747602947817,
+  "saturated_fraction": 0.0,
+  "reward_mean": -20.875,
+  "episode_lengths": [
+    944,
+    824,
+    1184,
+    824,
+    1043,
+    1006,
+    1066,
+    1007
+  ],
+  "note": "Pilot/tuning diagnostics; excluded from final held-out evaluation. Same diagnostic seeds for pilot comparison."
+}

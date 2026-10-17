@@ -1,0 +1,12 @@
+{
+  "device": "mps",
+  "seconds": 301.2762588340556,
+  "episodes": 984,
+  "environment_steps": 969323,
+  "steps_per_second": 3217.389261773553,
+  "update_seconds_mean": 0.09368700066740375,
+  "update_seconds_median": 0.07234208402223885,
+  "process_peak_rss_bytes": 946143232,
+  "mps_current_allocated_bytes": 6557696,
+  "mps_driver_allocated_bytes": 86720512
+}

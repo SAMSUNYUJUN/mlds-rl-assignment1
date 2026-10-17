@@ -1,0 +1,29 @@
+{
+  "report_sha256": "38d086bb830063f97badbeeeec9de3e9af89a82ad4af23cf3f02c23bf1c7cd2e",
+  "runs": {
+    "cartpole_basic": {
+      "folder": "runs/cartpole_basic",
+      "checkpoint_sha256": "e488f799b850759c62943386dc9815cfb9d3e51e2a8887616a2b70a69e859510",
+      "train_episodes": 4096,
+      "eval_episodes": 500
+    },
+    "pong_basic": {
+      "folder": "runs/pong_basic",
+      "checkpoint_sha256": "ae76d5870ae51f9f31c69ec8d68a58072992b2d538be83479f70c9230d4dd5ab",
+      "train_episodes": 4096,
+      "eval_episodes": 500
+    },
+    "cartpole_baseline": {
+      "folder": "runs/cartpole_baseline",
+      "checkpoint_sha256": "e9013dc7778708a608e5f274d7f264527838a39e48f0c226a3251b5e36bd2f39",
+      "train_episodes": 4096,
+      "eval_episodes": 500
+    },
+    "pong_baseline": {
+      "folder": "runs/pong_baseline",
+      "checkpoint_sha256": "2e6c774ed443eeb5a3858277e08fc1669a345bbe9825858a5f0c701649d82a4f",
+      "train_episodes": 4096,
+      "eval_episodes": 500
+    }
+  }
+}

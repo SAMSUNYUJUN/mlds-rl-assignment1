@@ -1,0 +1,70 @@
+A.L.E: Arcade Learning Environment (version 0.12.1+8a8fafb)
+[Powered by Stella]
+{"run": "pong_baseline", "episode": 1, "diagnostic_reward": -20.0, "length": 859, "elapsed_seconds": 0.32}
+{"run": "pong_baseline", "episode": 2, "diagnostic_reward": -20.0, "length": 920, "elapsed_seconds": 0.59}
+{"run": "pong_baseline", "episode": 3, "diagnostic_reward": -21.0, "length": 885, "elapsed_seconds": 0.86}
+{"run": "pong_baseline", "episode": 4, "diagnostic_reward": -20.0, "length": 922, "elapsed_seconds": 1.15}
+{"run": "pong_baseline", "episode": 5, "diagnostic_reward": -21.0, "length": 825, "elapsed_seconds": 1.42}
+{"run": "pong_baseline", "episode": 6, "diagnostic_reward": -21.0, "length": 825, "elapsed_seconds": 1.69}
+{"run": "pong_baseline", "episode": 7, "diagnostic_reward": -20.0, "length": 859, "elapsed_seconds": 1.97}
+{"run": "pong_baseline", "episode": 8, "diagnostic_reward": -21.0, "length": 885, "elapsed_seconds": 2.26}
+{"run": "pong_baseline", "episode": 9, "diagnostic_reward": -20.0, "length": 1105, "elapsed_seconds": 2.59}
+{"run": "pong_baseline", "episode": 10, "diagnostic_reward": -19.0, "length": 1320, "elapsed_seconds": 2.97}
+{"run": "pong_baseline", "episode": 11, "diagnostic_reward": -20.0, "length": 859, "elapsed_seconds": 3.28}
+{"run": "pong_baseline", "episode": 12, "diagnostic_reward": -19.0, "length": 955, "elapsed_seconds": 3.6}
+{"run": "pong_baseline", "episode": 13, "diagnostic_reward": -18.0, "length": 1357, "elapsed_seconds": 4.0}
+{"run": "pong_baseline", "episode": 14, "diagnostic_reward": -21.0, "length": 949, "elapsed_seconds": 4.32}
+{"run": "pong_baseline", "episode": 15, "diagnostic_reward": -21.0, "length": 885, "elapsed_seconds": 4.66}
+{"run": "pong_baseline", "episode": 16, "diagnostic_reward": -20.0, "length": 860, "elapsed_seconds": 4.97}
+{"run": "pong_baseline", "episode": 17, "diagnostic_reward": -17.0, "length": 1268, "elapsed_seconds": 5.37}
+{"run": "pong_baseline", "episode": 18, "diagnostic_reward": -21.0, "length": 886, "elapsed_seconds": 5.69}
+{"run": "pong_baseline", "episode": 19, "diagnostic_reward": -20.0, "length": 923, "elapsed_seconds": 6.02}
+{"run": "pong_baseline", "episode": 20, "diagnostic_reward": -21.0, "length": 826, "elapsed_seconds": 6.33}
+{"run": "pong_baseline", "episode": 21, "diagnostic_reward": -20.0, "length": 919, "elapsed_seconds": 6.67}
+{"run": "pong_baseline", "episode": 22, "diagnostic_reward": -20.0, "length": 859, "elapsed_seconds": 6.98}
+{"run": "pong_baseline", "episode": 23, "diagnostic_reward": -20.0, "length": 923, "elapsed_seconds": 7.34}
+{"run": "pong_baseline", "episode": 24, "diagnostic_reward": -21.0, "length": 887, "elapsed_seconds": 7.65}
+{"run": "pong_baseline", "episode": 25, "diagnostic_reward": -20.0, "length": 860, "elapsed_seconds": 8.0}
+{"run": "pong_baseline", "episode": 26, "diagnostic_reward": -20.0, "length": 859, "elapsed_seconds": 8.32}
+{"run": "pong_baseline", "episode": 27, "diagnostic_reward": -21.0, "length": 1008, "elapsed_seconds": 8.67}
+{"run": "pong_baseline", "episode": 28, "diagnostic_reward": -21.0, "length": 885, "elapsed_seconds": 9.0}
+{"run": "pong_baseline", "episode": 29, "diagnostic_reward": -21.0, "length": 885, "elapsed_seconds": 9.34}
+{"run": "pong_baseline", "episode": 30, "diagnostic_reward": -21.0, "length": 947, "elapsed_seconds": 9.68}
+{"run": "pong_baseline", "episode": 31, "diagnostic_reward": -20.0, "length": 861, "elapsed_seconds": 10.0}
+{"run": "pong_baseline", "episode": 32, "diagnostic_reward": -20.0, "length": 861, "elapsed_seconds": 10.33}
+{"reference": "pong", "episode": 1, "reward": -19.0, "length": 1016, "elapsed_seconds": 0.23}
+{"reference": "pong", "episode": 2, "reward": -21.0, "length": 1308, "elapsed_seconds": 0.52}
+{"reference": "pong", "episode": 3, "reward": -19.0, "length": 1018, "elapsed_seconds": 0.75}
+{"reference": "pong", "episode": 4, "reward": -21.0, "length": 1071, "elapsed_seconds": 1.0}
+{"reference": "pong", "episode": 5, "reward": -21.0, "length": 764, "elapsed_seconds": 1.19}
+{"reference": "pong", "episode": 6, "reward": -21.0, "length": 764, "elapsed_seconds": 1.38}
+{"reference": "pong", "episode": 7, "reward": -21.0, "length": 1007, "elapsed_seconds": 1.61}
+{"reference": "pong", "episode": 8, "reward": -21.0, "length": 884, "elapsed_seconds": 1.83}
+{"reference": "pong", "episode": 9, "reward": -21.0, "length": 1005, "elapsed_seconds": 2.06}
+{"reference": "pong", "episode": 10, "reward": -21.0, "length": 1244, "elapsed_seconds": 2.33}
+{"reference": "pong", "episode": 11, "reward": -21.0, "length": 824, "elapsed_seconds": 2.53}
+{"reference": "pong", "episode": 12, "reward": -21.0, "length": 1069, "elapsed_seconds": 2.77}
+{"reference": "pong", "episode": 13, "reward": -21.0, "length": 946, "elapsed_seconds": 3.0}
+{"reference": "pong", "episode": 14, "reward": -21.0, "length": 824, "elapsed_seconds": 3.21}
+{"reference": "pong", "episode": 15, "reward": -21.0, "length": 826, "elapsed_seconds": 3.41}
+{"reference": "pong", "episode": 16, "reward": -20.0, "length": 982, "elapsed_seconds": 3.64}
+{"reference": "pong", "episode": 17, "reward": -21.0, "length": 1189, "elapsed_seconds": 3.9}
+{"reference": "pong", "episode": 18, "reward": -21.0, "length": 1067, "elapsed_seconds": 4.15}
+{"reference": "pong", "episode": 19, "reward": -21.0, "length": 888, "elapsed_seconds": 4.36}
+{"reference": "pong", "episode": 20, "reward": -21.0, "length": 1006, "elapsed_seconds": 4.6}
+{"reference": "pong", "episode": 21, "reward": -21.0, "length": 1129, "elapsed_seconds": 4.85}
+{"reference": "pong", "episode": 22, "reward": -20.0, "length": 1226, "elapsed_seconds": 5.12}
+{"reference": "pong", "episode": 23, "reward": -19.0, "length": 1199, "elapsed_seconds": 5.39}
+{"reference": "pong", "episode": 24, "reward": -21.0, "length": 1068, "elapsed_seconds": 5.64}
+{"reference": "pong", "episode": 25, "reward": -21.0, "length": 1069, "elapsed_seconds": 5.88}
+{"reference": "pong", "episode": 26, "reward": -20.0, "length": 1040, "elapsed_seconds": 6.12}
+{"reference": "pong", "episode": 27, "reward": -21.0, "length": 1125, "elapsed_seconds": 6.37}
+{"reference": "pong", "episode": 28, "reward": -19.0, "length": 1381, "elapsed_seconds": 6.67}
+{"reference": "pong", "episode": 29, "reward": -21.0, "length": 945, "elapsed_seconds": 6.89}
+{"reference": "pong", "episode": 30, "reward": -21.0, "length": 1004, "elapsed_seconds": 7.12}
+{"reference": "pong", "episode": 31, "reward": -20.0, "length": 1103, "elapsed_seconds": 7.37}
+{"reference": "pong", "episode": 32, "reward": -20.0, "length": 1347, "elapsed_seconds": 7.66}
+{
+  "output": "/Users/sunyujun03/Desktop/mlds-rl-assignment1/data/validation/gradient_diagnostic.json",
+  "models": 2
+}

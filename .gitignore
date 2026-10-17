@@ -1,0 +1,13 @@
+.venv/
+.uv-cache/
+.python/
+__pycache__/
+*.pyc
+.DS_Store
+tmp/
+output/*.zip
+logs/*.pid
+runs/**/checkpoint.pt
+runs/pilot_*/final.pt
+runs/**/*.lock
+runs/**/process.json

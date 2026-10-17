@@ -1,0 +1,7 @@
+{
+  "episode": 4096,
+  "steps": 1384029,
+  "elapsed": 10.482202916988172,
+  "last_batch_reward": 215.75,
+  "baseline": 0.0
+}

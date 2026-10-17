@@ -1,0 +1,17 @@
+{
+  "status": "preregistered_before_formal_training_and_final_evaluation",
+  "decision_basis": "Completed 300.92-second CPU and 301.28-second MPS end-to-end Pong benchmark; separate 128-episode learning-rate pilots on tuning seed 92.",
+  "device": "cpu",
+  "evaluation_episodes_per_model": 500,
+  "evaluation_seed_base": 80000000,
+  "evaluation_action_rule": "sample categorical policy; identical per-episode seed protocol across methods",
+  "standard_deviation": "sample, ddof=1; population ddof=0 also saved",
+  "stopping_rule": "Fixed 4096 complete training episodes per run. Final checkpoint at this budget is frozen before 500 held-out evaluations; no evaluation-based checkpoint or hyperparameter selection.",
+  "scope_and_limits": "One matched training seed per environment/method. Local implementation and method comparison, not a claim of solving Pong or estimating across-seed uncertainty.",
+  "runs": [
+    {"name": "cartpole_basic", "game": "cartpole", "baseline": false, "seed": 101, "episodes": 4096, "lr": 0.01, "batch_size": 8},
+    {"name": "cartpole_baseline", "game": "cartpole", "baseline": true, "seed": 101, "episodes": 4096, "lr": 0.01, "batch_size": 8},
+    {"name": "pong_basic", "game": "pong", "baseline": false, "seed": 202, "episodes": 4096, "lr": 0.001, "batch_size": 8},
+    {"name": "pong_baseline", "game": "pong", "baseline": true, "seed": 202, "episodes": 4096, "lr": 0.001, "batch_size": 8}
+  ]
+}

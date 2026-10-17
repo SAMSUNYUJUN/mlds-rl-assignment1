@@ -1,0 +1,1548 @@
+{
+  "status": "passed",
+  "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+  "platform": "macOS-15.6.1-arm64-arm-64bit",
+  "returns": {
+    "purpose": "Check return indexing, terminal handling, and gamma boundary cases.",
+    "theoretical_expectation": "For rewards [1,2,3] and gamma=.95, G=[5.6075,4.85,3]; gamma=0 returns immediate rewards, gamma=1 suffix sums, terminal continuation=0.",
+    "method": "Compare a backward recurrence to direct weighted sums and hand values; test empty and single-step episodes.",
+    "rewards": [
+      1.0,
+      2.0,
+      3.0
+    ],
+    "gamma": 0.95,
+    "expected_returns": [
+      5.6075,
+      4.85,
+      3.0
+    ],
+    "actual_returns": [
+      5.607499999999999,
+      4.85,
+      3.0
+    ],
+    "absolute_max_error": 8.881784197001252e-16,
+    "time_weights": [
+      1.0,
+      0.95,
+      0.9025
+    ],
+    "interpretation": "The final reward is included once; the objective time weights gamma^t are separate from RTG's internal discounts."
+  },
+  "exact_gradient_and_baseline": {
+    "purpose": "Verify the gamma^t return-to-go estimator, action-independent baseline unbiasedness, and variance claims.",
+    "theoretical_expectation": "For p=sigmoid(theta), dJ/dtheta=p(1-p)(2+3*gamma-gamma^2). Every fixed scalar baseline preserves it.",
+    "method": "Exhaustively enumerate all 2^3 trajectories, with their exact probabilities; compute population moments (no Monte Carlo error).",
+    "p": 0.35,
+    "gamma": 0.95,
+    "exact_gradient": 0.8980562499999999,
+    "enumerated_expected_gradient": 0.8980562499999998,
+    "trajectory_count": 8,
+    "constant_baselines": [
+      {
+        "constant_baseline": 0.0,
+        "expected_gradient": 0.8980562499999998,
+        "gradient_estimator_variance": 6.941151436679688
+      },
+      {
+        "constant_baseline": 2.0,
+        "expected_gradient": 0.8980562499999999,
+        "gradient_estimator_variance": 2.0112301335546876
+      },
+      {
+        "constant_baseline": 8.0,
+        "expected_gradient": 0.8980562500000003,
+        "gradient_estimator_variance": 16.89117447417968
+      }
+    ],
+    "variance_reduction_fraction_at_b2": 0.7102454611598615,
+    "missing_gamma_t_expected_gradient": 0.9099999999999998,
+    "missing_gamma_t_bias": 0.01194374999999992,
+    "action_dependent_baseline_expected_gradient": 2.2985086056692694e-17,
+    "action_dependent_baseline_bias": -0.8980562499999999,
+    "interpretation": "b=2 reduces gradient variance; b=8 increases it. Neither changes the expected gradient. Omitting gamma^t changes the declared discounted objective; a baseline depending on the current action is biased.",
+    "trajectories": [
+      {
+        "actions": [
+          0,
+          0,
+          0
+        ],
+        "rewards": [
+          1.0,
+          -0.5,
+          2.0
+        ],
+        "returns": [
+          2.33,
+          1.4,
+          2.0
+        ],
+        "probability": 0.27462500000000006,
+        "gradient": -1.91275,
+        "baseline_score": -0.9983749999999999,
+        "gradient_without_time_weights": -2.0055,
+        "gradient_with_action_dependent_baseline": -1.0972499999999998
+      },
+      {
+        "actions": [
+          0,
+          0,
+          1
+        ],
+        "rewards": [
+          1.0,
+          -0.5,
+          1.0
+        ],
+        "returns": [
+          1.4275,
+          0.44999999999999996,
+          1.0
+        ],
+        "probability": 0.147875,
+        "gradient": -0.06262500000000001,
+        "baseline_score": -0.09587499999999999,
+        "gradient_without_time_weights": -0.007124999999999937,
+        "gradient_with_action_dependent_baseline": -0.4654999999999999
+      },
+      {
+        "actions": [
+          0,
+          1,
+          0
+        ],
+        "rewards": [
+          1.0,
+          2.5,
+          2.0
+        ],
+        "returns": [
+          5.18,
+          4.4,
+          2.0
+        ],
+        "probability": 0.14787499999999998,
+        "gradient": 0.27225000000000044,
+        "baseline_score": -0.048375,
+        "gradient_without_time_weights": 0.34700000000000064,
+        "gradient_with_action_dependent_baseline": -0.28974999999999973
+      },
+      {
+        "actions": [
+          0,
+          1,
+          1
+        ],
+        "rewards": [
+          1.0,
+          2.5,
+          1.0
+        ],
+        "returns": [
+          4.2775,
+          3.45,
+          1.0
+        ],
+        "probability": 0.07962499999999999,
+        "gradient": 1.219875,
+        "baseline_score": 0.8541249999999999,
+        "gradient_without_time_weights": 1.3953750000000005,
+        "gradient_with_action_dependent_baseline": -0.5604999999999999
+      },
+      {
+        "actions": [
+          1,
+          0,
+          0
+        ],
+        "rewards": [
+          3.0,
+          -0.5,
+          2.0
+        ],
+        "returns": [
+          4.33,
+          1.4,
+          2.0
+        ],
+        "probability": 0.14787499999999998,
+        "gradient": 1.7172500000000004,
+        "baseline_score": 0.0016250000000000986,
+        "gradient_without_time_weights": 1.6245000000000003,
+        "gradient_with_action_dependent_baseline": 0.23275000000000012
+      },
+      {
+        "actions": [
+          1,
+          0,
+          1
+        ],
+        "rewards": [
+          3.0,
+          -0.5,
+          1.0
+        ],
+        "returns": [
+          3.4275,
+          0.44999999999999996,
+          1.0
+        ],
+        "probability": 0.07962499999999999,
+        "gradient": 2.664875,
+        "baseline_score": 0.9041250000000001,
+        "gradient_without_time_weights": 2.720375,
+        "gradient_with_action_dependent_baseline": -0.03799999999999981
+      },
+      {
+        "actions": [
+          1,
+          1,
+          0
+        ],
+        "rewards": [
+          3.0,
+          2.5,
+          2.0
+        ],
+        "returns": [
+          7.18,
+          4.4,
+          2.0
+        ],
+        "probability": 0.07962499999999999,
+        "gradient": 6.75225,
+        "baseline_score": 0.9516249999999999,
+        "gradient_without_time_weights": 6.827,
+        "gradient_with_action_dependent_baseline": 3.89025
+      },
+      {
+        "actions": [
+          1,
+          1,
+          1
+        ],
+        "rewards": [
+          3.0,
+          2.5,
+          1.0
+        ],
+        "returns": [
+          6.2775,
+          3.45,
+          1.0
+        ],
+        "probability": 0.04287499999999999,
+        "gradient": 6.797375,
+        "baseline_score": 1.8541249999999998,
+        "gradient_without_time_weights": 6.972875,
+        "gradient_with_action_dependent_baseline": 2.717
+      }
+    ]
+  },
+  "same_batch_mean_bias": {
+    "purpose": "Check why a current-batch return mean is not the implemented independent prior-batch baseline.",
+    "theoretical_expectation": "For N iid one-step trajectories, including each trajectory in its own sample-mean baseline multiplies the expected gradient by (1-1/N).",
+    "method": "Exact enumeration of all 16 Bernoulli action batches with N=4.",
+    "unbiased_expected_gradient": 0.45499999999999996,
+    "current_batch_mean_expected_gradient": 0.3412499999999999,
+    "expected_ratio": 0.75,
+    "actual_ratio": 0.7499999999999998,
+    "interpretation": "A mean including the current action introduces finite-batch bias. An EMA frozen from completed earlier batches avoids this self-dependence."
+  },
+  "autograd": {
+    "purpose": "Verify the sign of minimizing policy loss, baseline detach, and an actual autograd computation.",
+    "theoretical_expectation": "loss gradient is -dJ/dtheta; minimizing it increases J; detached baseline receives no gradient.",
+    "method": "Float64 PyTorch exact-probability weighted policy loss; central finite difference of analytic J; one SGD step of size .01.",
+    "loss_gradient": -0.89805625,
+    "finite_difference_objective_gradient": 0.8980562498095424,
+    "baseline_gradient_is_none": true,
+    "objective_before": 3.7116249999999997,
+    "objective_after": 3.719700874889644,
+    "objective_increase": 0.008075874889644119,
+    "interpretation": "The negative sign implements reward maximization. This local SGD check isolates estimator mathematics; production uses Adam with the same loss sign."
+  },
+  "cartpole_trace": {
+    "purpose": "Trace actual observations, actions, rewards and RTG on an unmodified complete CartPole episode.",
+    "theoretical_expectation": "CartPole rewards are +1 at every observed step, so G_t=(1-.95^(L-t))/.05 through the episode's final reward.",
+    "method": "Gymnasium CartPole-v1, uniform iid actions, fixed reset/action seeds, natural termination or built-in TimeLimit; gradients disabled by using a pure Python policy.",
+    "environment": "CartPole-v1",
+    "seed": 74219,
+    "action_seed": 74220,
+    "episode_length": 45,
+    "episode_reward": 45.0,
+    "terminated": true,
+    "truncated": false,
+    "backward_vs_direct_max_absolute_error": 3.552713678800501e-15,
+    "geometric_formula_max_absolute_error": 1.7763568394002505e-14,
+    "first_ten_steps": [
+      {
+        "step": 0,
+        "observation": [
+          -0.03522253781557083,
+          -0.0335368886590004,
+          0.01920427568256855,
+          -0.013551972806453705
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.0358932763338089,
+          0.16130445897579193,
+          0.018933236598968506,
+          -0.30011439323425293
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 18.011194860258136,
+        "gamma_t": 1.0,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 1,
+        "observation": [
+          -0.0358932763338089,
+          0.16130445897579193,
+          0.018933236598968506,
+          -0.30011439323425293
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.03266718611121178,
+          0.3561514914035797,
+          0.012930948287248611,
+          -0.5867665410041809
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.906520905534883,
+        "gamma_t": 0.95,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 2,
+        "observation": [
+          -0.03266718611121178,
+          0.3561514914035797,
+          0.012930948287248611,
+          -0.5867665410041809
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.02554415725171566,
+          0.16085085272789001,
+          0.0011956176022067666,
+          -0.29003846645355225
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.796337795299877,
+        "gamma_t": 0.9025,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 3,
+        "observation": [
+          -0.02554415725171566,
+          0.16085085272789001,
+          0.0011956176022067666,
+          -0.29003846645355225
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.022327139973640442,
+          -0.03428812697529793,
+          -0.00460515171289444,
+          0.0030213133431971073
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.680355573999872,
+        "gamma_t": 0.8573749999999999,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 4,
+        "observation": [
+          -0.022327139973640442,
+          -0.03428812697529793,
+          -0.00460515171289444,
+          0.0030213133431971073
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.023012902587652206,
+          0.1608995646238327,
+          -0.004544725175946951,
+          -0.291111022233963
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.558269025263023,
+        "gamma_t": 0.8145062499999999,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 5,
+        "observation": [
+          -0.023012902587652206,
+          0.1608995646238327,
+          -0.004544725175946951,
+          -0.291111022233963
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.01979491114616394,
+          0.35608601570129395,
+          -0.010366945527493954,
+          -0.5852238535881042
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.42975686869792,
+        "gamma_t": 0.7737809374999998,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 6,
+        "observation": [
+          -0.01979491114616394,
+          0.35608601570129395,
+          -0.010366945527493954,
+          -0.5852238535881042
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.012673190794885159,
+          0.5513516664505005,
+          -0.02207142300903797,
+          -0.8811543583869934
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.294480914418862,
+        "gamma_t": 0.7350918906249998,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 7,
+        "observation": [
+          -0.012673190794885159,
+          0.5513516664505005,
+          -0.02207142300903797,
+          -0.8811543583869934
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.0016461577033624053,
+          0.3565363585948944,
+          -0.03969451040029526,
+          -0.5954910516738892
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.15208517307249,
+        "gamma_t": 0.6983372960937497,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 8,
+        "observation": [
+          -0.0016461577033624053,
+          0.3565363585948944,
+          -0.03969451040029526,
+          -0.5954910516738892
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          0.005484569352120161,
+          0.16199176013469696,
+          -0.05160433053970337,
+          -0.3155711889266968
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.002194919023673,
+        "gamma_t": 0.6634204312890623,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 9,
+        "observation": [
+          0.005484569352120161,
+          0.16199176013469696,
+          -0.05160433053970337,
+          -0.3155711889266968
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          0.008724404498934746,
+          -0.03235859051346779,
+          -0.05791575461626053,
+          -0.03959866240620613
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 16.844415704235445,
+        "gamma_t": 0.6302494097246091,
+        "policy_action_probability": 0.5
+      }
+    ],
+    "full_episode": [
+      {
+        "step": 0,
+        "observation": [
+          -0.03522253781557083,
+          -0.0335368886590004,
+          0.01920427568256855,
+          -0.013551972806453705
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.0358932763338089,
+          0.16130445897579193,
+          0.018933236598968506,
+          -0.30011439323425293
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 18.011194860258136,
+        "gamma_t": 1.0,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 1,
+        "observation": [
+          -0.0358932763338089,
+          0.16130445897579193,
+          0.018933236598968506,
+          -0.30011439323425293
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.03266718611121178,
+          0.3561514914035797,
+          0.012930948287248611,
+          -0.5867665410041809
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.906520905534883,
+        "gamma_t": 0.95,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 2,
+        "observation": [
+          -0.03266718611121178,
+          0.3561514914035797,
+          0.012930948287248611,
+          -0.5867665410041809
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.02554415725171566,
+          0.16085085272789001,
+          0.0011956176022067666,
+          -0.29003846645355225
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.796337795299877,
+        "gamma_t": 0.9025,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 3,
+        "observation": [
+          -0.02554415725171566,
+          0.16085085272789001,
+          0.0011956176022067666,
+          -0.29003846645355225
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.022327139973640442,
+          -0.03428812697529793,
+          -0.00460515171289444,
+          0.0030213133431971073
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.680355573999872,
+        "gamma_t": 0.8573749999999999,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 4,
+        "observation": [
+          -0.022327139973640442,
+          -0.03428812697529793,
+          -0.00460515171289444,
+          0.0030213133431971073
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.023012902587652206,
+          0.1608995646238327,
+          -0.004544725175946951,
+          -0.291111022233963
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.558269025263023,
+        "gamma_t": 0.8145062499999999,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 5,
+        "observation": [
+          -0.023012902587652206,
+          0.1608995646238327,
+          -0.004544725175946951,
+          -0.291111022233963
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.01979491114616394,
+          0.35608601570129395,
+          -0.010366945527493954,
+          -0.5852238535881042
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.42975686869792,
+        "gamma_t": 0.7737809374999998,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 6,
+        "observation": [
+          -0.01979491114616394,
+          0.35608601570129395,
+          -0.010366945527493954,
+          -0.5852238535881042
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.012673190794885159,
+          0.5513516664505005,
+          -0.02207142300903797,
+          -0.8811543583869934
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.294480914418862,
+        "gamma_t": 0.7350918906249998,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 7,
+        "observation": [
+          -0.012673190794885159,
+          0.5513516664505005,
+          -0.02207142300903797,
+          -0.8811543583869934
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.0016461577033624053,
+          0.3565363585948944,
+          -0.03969451040029526,
+          -0.5954910516738892
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.15208517307249,
+        "gamma_t": 0.6983372960937497,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 8,
+        "observation": [
+          -0.0016461577033624053,
+          0.3565363585948944,
+          -0.03969451040029526,
+          -0.5954910516738892
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          0.005484569352120161,
+          0.16199176013469696,
+          -0.05160433053970337,
+          -0.3155711889266968
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 17.002194919023673,
+        "gamma_t": 0.6634204312890623,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 9,
+        "observation": [
+          0.005484569352120161,
+          0.16199176013469696,
+          -0.05160433053970337,
+          -0.3155711889266968
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          0.008724404498934746,
+          -0.03235859051346779,
+          -0.05791575461626053,
+          -0.03959866240620613
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 16.844415704235445,
+        "gamma_t": 0.6302494097246091,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 10,
+        "observation": [
+          0.008724404498934746,
+          -0.03235859051346779,
+          -0.05791575461626053,
+          -0.03959866240620613
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          0.008077233098447323,
+          -0.22660426795482635,
+          -0.05870772898197174,
+          0.234263613820076
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 16.67833232024784,
+        "gamma_t": 0.5987369392383787,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 11,
+        "observation": [
+          0.008077233098447323,
+          -0.22660426795482635,
+          -0.05870772898197174,
+          0.234263613820076
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          0.003545147366821766,
+          -0.42084041237831116,
+          -0.05402245372533798,
+          0.5078657269477844
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 16.503507705524044,
+        "gamma_t": 0.5688000922764597,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 12,
+        "observation": [
+          0.003545147366821766,
+          -0.42084041237831116,
+          -0.05402245372533798,
+          0.5078657269477844
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.004871660843491554,
+          -0.22500057518482208,
+          -0.0438651405274868,
+          0.19865964353084564
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 16.319481795288468,
+        "gamma_t": 0.5403600876626367,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 13,
+        "observation": [
+          -0.004871660843491554,
+          -0.22500057518482208,
+          -0.0438651405274868,
+          0.19865964353084564
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.009371672756969929,
+          -0.41946858167648315,
+          -0.03989194706082344,
+          0.4771888256072998
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 16.125770310829967,
+        "gamma_t": 0.5133420832795048,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 14,
+        "observation": [
+          -0.009371672756969929,
+          -0.41946858167648315,
+          -0.03989194706082344,
+          0.4771888256072998
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.017761044204235077,
+          -0.2238067388534546,
+          -0.030348172411322594,
+          0.17220446467399597
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 15.921863485084177,
+        "gamma_t": 0.48767497911552954,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 15,
+        "observation": [
+          -0.017761044204235077,
+          -0.2238067388534546,
+          -0.030348172411322594,
+          0.17220446467399597
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.022237177938222885,
+          -0.02826387621462345,
+          -0.02690408192574978,
+          -0.12989577651023865
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 15.70722472114124,
+        "gamma_t": 0.46329123015975304,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 16,
+        "observation": [
+          -0.022237177938222885,
+          -0.02826387621462345,
+          -0.02690408192574978,
+          -0.12989577651023865
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.022802455350756645,
+          -0.22299030423164368,
+          -0.02950199693441391,
+          0.15417931973934174
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 15.481289180148673,
+        "gamma_t": 0.44012666865176536,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 17,
+        "observation": [
+          -0.022802455350756645,
+          -0.22299030423164368,
+          -0.02950199693441391,
+          0.15417931973934174
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.027262263000011444,
+          -0.02745862677693367,
+          -0.026418412104249,
+          -0.14766289293766022
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 15.243462294893341,
+        "gamma_t": 0.4181203352191771,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 18,
+        "observation": [
+          -0.027262263000011444,
+          -0.02745862677693367,
+          -0.026418412104249,
+          -0.14766289293766022
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.027811434119939804,
+          -0.22219249606132507,
+          -0.02937166951596737,
+          0.13656987249851227
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 14.993118205150886,
+        "gamma_t": 0.3972143184582182,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 19,
+        "observation": [
+          -0.027811434119939804,
+          -0.22219249606132507,
+          -0.02937166951596737,
+          0.13656987249851227
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.03225528448820114,
+          -0.026662427932024002,
+          -0.0266402717679739,
+          -0.16523276269435883
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 14.729598110685144,
+        "gamma_t": 0.37735360253530725,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 20,
+        "observation": [
+          -0.03225528448820114,
+          -0.026662427932024002,
+          -0.0266402717679739,
+          -0.16523276269435883
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.032788533717393875,
+          -0.22139309346675873,
+          -0.029944926500320435,
+          0.11892829090356827
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 14.45220853756331,
+        "gamma_t": 0.3584859224085419,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 21,
+        "observation": [
+          -0.032788533717393875,
+          -0.22139309346675873,
+          -0.029944926500320435,
+          0.11892829090356827
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.037216395139694214,
+          -0.4160735011100769,
+          -0.02756636030972004,
+          0.40201547741889954
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 14.160219513224538,
+        "gamma_t": 0.3405616262881148,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 22,
+        "observation": [
+          -0.037216395139694214,
+          -0.4160735011100769,
+          -0.02756636030972004,
+          0.40201547741889954
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.04553786665201187,
+          -0.6107938289642334,
+          -0.019526051357388496,
+          0.685881495475769
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 13.852862645499515,
+        "gamma_t": 0.323533544973709,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 23,
+        "observation": [
+          -0.04553786665201187,
+          -0.6107938289642334,
+          -0.019526051357388496,
+          0.685881495475769
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.05775374174118042,
+          -0.41540631651878357,
+          -0.005808420944958925,
+          0.38711583614349365
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 13.529329100525807,
+        "gamma_t": 0.3073568677250236,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 24,
+        "observation": [
+          -0.05775374174118042,
+          -0.41540631651878357,
+          -0.005808420944958925,
+          0.38711583614349365
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.06606186926364899,
+          -0.6104453206062317,
+          0.0019338957499712706,
+          0.6779617667198181
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 13.188767474237693,
+        "gamma_t": 0.2919890243387724,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 25,
+        "observation": [
+          -0.06606186926364899,
+          -0.6104453206062317,
+          0.0019338957499712706,
+          0.6779617667198181
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.07827077805995941,
+          -0.4153503179550171,
+          0.01549313124269247,
+          0.38588833808898926
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 12.83028155182915,
+        "gamma_t": 0.27738957312183377,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 26,
+        "observation": [
+          -0.07827077805995941,
+          -0.4153503179550171,
+          0.01549313124269247,
+          0.38588833808898926
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.08657778054475784,
+          -0.6106887459754944,
+          0.02321089804172516,
+          0.6834155917167664
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 12.452927949293844,
+        "gamma_t": 0.26352009446574204,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 27,
+        "observation": [
+          -0.08657778054475784,
+          -0.6106887459754944,
+          0.02321089804172516,
+          0.6834155917167664
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.09879155457019806,
+          -0.4158966541290283,
+          0.03687921166419983,
+          0.39812958240509033
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 12.055713630835626,
+        "gamma_t": 0.2503440897424549,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 28,
+        "observation": [
+          -0.09879155457019806,
+          -0.4158966541290283,
+          0.03687921166419983,
+          0.39812958240509033
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.10710948705673218,
+          -0.22131678462028503,
+          0.04484179988503456,
+          0.11729825288057327
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 11.63759329561645,
+        "gamma_t": 0.23782688525533216,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 29,
+        "observation": [
+          -0.10710948705673218,
+          -0.22131678462028503,
+          0.04484179988503456,
+          0.11729825288057327
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.11153582483530045,
+          -0.4170515835285187,
+          0.047187767922878265,
+          0.42378440499305725
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 11.197466626964683,
+        "gamma_t": 0.22593554099256555,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 30,
+        "observation": [
+          -0.11153582483530045,
+          -0.4170515835285187,
+          0.047187767922878265,
+          0.42378440499305725
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.11987685412168503,
+          -0.6128091216087341,
+          0.05566345527768135,
+          0.7309619188308716
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 10.73417539680493,
+        "gamma_t": 0.21463876394293727,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 31,
+        "observation": [
+          -0.11987685412168503,
+          -0.6128091216087341,
+          0.05566345527768135,
+          0.7309619188308716
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.13213303685188293,
+          -0.41849884390830994,
+          0.07028269022703171,
+          0.45630452036857605
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 10.2465004176894,
+        "gamma_t": 0.2039068257457904,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 32,
+        "observation": [
+          -0.13213303685188293,
+          -0.41849884390830994,
+          0.07028269022703171,
+          0.45630452036857605
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.14050301909446716,
+          -0.22443729639053345,
+          0.07940877974033356,
+          0.1865769326686859
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 9.733158334409895,
+        "gamma_t": 0.19371148445850087,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 33,
+        "observation": [
+          -0.14050301909446716,
+          -0.22443729639053345,
+          0.07940877974033356,
+          0.1865769326686859
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.14499175548553467,
+          -0.4206002950668335,
+          0.08314032107591629,
+          0.5032158493995667
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 9.192798246747259,
+        "gamma_t": 0.18402591023557582,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 34,
+        "observation": [
+          -0.14499175548553467,
+          -0.4206002950668335,
+          0.08314032107591629,
+          0.5032158493995667
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.15340377390384674,
+          -0.6167895793914795,
+          0.09320463985204697,
+          0.8208984136581421
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 8.623998154470799,
+        "gamma_t": 0.174824614723797,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 35,
+        "observation": [
+          -0.15340377390384674,
+          -0.6167895793914795,
+          0.09320463985204697,
+          0.8208984136581421
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.16573956608772278,
+          -0.8130549192428589,
+          0.10962260514497757,
+          1.1413811445236206
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 8.02526121523242,
+        "gamma_t": 0.16608338398760716,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 36,
+        "observation": [
+          -0.16573956608772278,
+          -0.8130549192428589,
+          0.10962260514497757,
+          1.1413811445236206
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.18200065195560455,
+          -0.6195229887962341,
+          0.13245022296905518,
+          0.8849902749061584
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 7.395011805507812,
+        "gamma_t": 0.1577792147882268,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 37,
+        "observation": [
+          -0.18200065195560455,
+          -0.6195229887962341,
+          0.13245022296905518,
+          0.8849902749061584
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.19439111649990082,
+          -0.42642393708229065,
+          0.15015003085136414,
+          0.6367052793502808
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 6.731591374218749,
+        "gamma_t": 0.14989025404881545,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 38,
+        "observation": [
+          -0.19439111649990082,
+          -0.42642393708229065,
+          0.15015003085136414,
+          0.6367052793502808
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.202919602394104,
+          -0.23367956280708313,
+          0.16288414597511292,
+          0.39482006430625916
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 6.033254078124999,
+        "gamma_t": 0.14239574134637467,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 39,
+        "observation": [
+          -0.202919602394104,
+          -0.23367956280708313,
+          0.16288414597511292,
+          0.39482006430625916
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.2075931876897812,
+          -0.04119822010397911,
+          0.17078053951263428,
+          0.1575961410999298
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 5.298162187499999,
+        "gamma_t": 0.13527595427905592,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 40,
+        "observation": [
+          -0.2075931876897812,
+          -0.04119822010397911,
+          0.17078053951263428,
+          0.1575961410999298
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.208417147397995,
+          -0.2383013814687729,
+          0.17393246293067932,
+          0.49891558289527893
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 4.524381249999999,
+        "gamma_t": 0.12851215656510312,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 41,
+        "observation": [
+          -0.208417147397995,
+          -0.2383013814687729,
+          0.17393246293067932,
+          0.49891558289527893
+        ],
+        "action": 1,
+        "reward": 1.0,
+        "next_observation": [
+          -0.2131831794977188,
+          -0.04600324481725693,
+          0.1839107722043991,
+          0.26569920778274536
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 3.709875,
+        "gamma_t": 0.12208654873684796,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 42,
+        "observation": [
+          -0.2131831794977188,
+          -0.04600324481725693,
+          0.1839107722043991,
+          0.26569920778274536
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.21410325169563293,
+          -0.24320849776268005,
+          0.18922476470470428,
+          0.6102840900421143
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 2.8525,
+        "gamma_t": 0.11598222130000556,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 43,
+        "observation": [
+          -0.21410325169563293,
+          -0.24320849776268005,
+          0.18922476470470428,
+          0.6102840900421143
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.21896740794181824,
+          -0.4404010474681854,
+          0.20143043994903564,
+          0.9560938477516174
+        ],
+        "terminated": false,
+        "truncated": false,
+        "return_to_go": 1.95,
+        "gamma_t": 0.11018311023500528,
+        "policy_action_probability": 0.5
+      },
+      {
+        "step": 44,
+        "observation": [
+          -0.21896740794181824,
+          -0.4404010474681854,
+          0.20143043994903564,
+          0.9560938477516174
+        ],
+        "action": 0,
+        "reward": 1.0,
+        "next_observation": [
+          -0.227775439620018,
+          -0.6375783681869507,
+          0.22055232524871826,
+          1.3047007322311401
+        ],
+        "terminated": true,
+        "truncated": false,
+        "return_to_go": 1.0,
+        "gamma_t": 0.10467395472325501,
+        "policy_action_probability": 0.5
+      }
+    ],
+    "interpretation": "This is a reproducible random-policy diagnostic trace, not a trained model result and not part of the 500-episode final evaluations."
+  },
+  "production_trainer": {
+    "purpose": "Check the production return, policy update, baseline timing, chunking, image preprocessing, and checkpoint resume against independent references.",
+    "theoretical_expectation": "Exact complete trajectory enumeration at p=.5 gives dJ/dtheta=.986875; /100 loss and SGD .01 gives theta=.0000986875 for b=0 and b=2. Chunking and serialization must preserve the update.",
+    "method": "Import src.rl; run real update() on all eight trajectories; independently calculate a single-graph Adam update; verify synthetic image pixels; save/load model+Adam+EMA between actual CartPole batches with deterministic episode seeds.",
+    "production_returns_max_absolute_error": 8.881784197001252e-16,
+    "enumerated_production_update": [
+      {
+        "baseline": 0.0,
+        "actual_theta_after_update": 9.868749766610563e-05,
+        "expected_theta_after_update": 9.868749999999999e-05,
+        "baseline_used": 0.0,
+        "baseline_next": 0.0,
+        "expected_baseline_next": 0.0
+      },
+      {
+        "baseline": 2.0,
+        "actual_theta_after_update": 9.868750115856529e-05,
+        "expected_theta_after_update": 9.868749999999999e-05,
+        "baseline_used": 2.0,
+        "baseline_next": 2.079097283085013,
+        "expected_baseline_next": 2.079097283085013
+      }
+    ],
+    "chunk1_vs_independent_single_graph_parameter_max_absolute_error": 2.9802322387695312e-08,
+    "chunk1_vs_independent_single_graph_loss_absolute_error": 2.86672729998827e-09,
+    "preprocessing_test_pixels": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "signed_image_difference_range": [
+      -1,
+      0
+    ],
+    "preprocessing_does_not_mutate_raw_observation": true,
+    "resume_rollouts_identical": true,
+    "resume_parameter_max_absolute_error": 0.0,
+    "resume_baseline_exactly_equal": true,
+    "actual_rollout_episode_lengths": [
+      17,
+      16,
+      16,
+      45,
+      20,
+      26,
+      21,
+      14
+    ],
+    "resume_environment_seed_base": 73400000,
+    "interpretation": "Production update agrees with analytic math including loss scaling, chunked recomputation, and a baseline used only from earlier batches. Actual CPU rollouts and the next update are bitwise identical after the checkpoint roundtrip. This validates update-boundary resume, not bitwise CPU/MPS equivalence or interruption inside an episode."
+  },
+  "elapsed_seconds": 1.3711770839290693
+}

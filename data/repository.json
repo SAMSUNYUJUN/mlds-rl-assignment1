@@ -1,0 +1,12 @@
+{
+  "authenticated_login": "SAMSUNYUJUN",
+  "repo": "mlds-rl-assignment1",
+  "url": "https://github.com/SAMSUNYUJUN/mlds-rl-assignment1",
+  "owner": "SAMSUNYUJUN",
+  "is_private": false,
+  "default_branch_at_initial_check": "",
+  "remote_code_delivered": false,
+  "push_authorized": false,
+  "verification": "Native read-only gh auth status, gh api user --jq .login, gh repo view --json name,owner,url,isPrivate,defaultBranchRef",
+  "note": "Initial sandbox-only authentication failure was a network restriction; native authenticated requests succeeded. Remote code delivery awaits explicit user authorization after reviewable local deliverables exist."
+}

@@ -1,0 +1,19 @@
+{
+  "run": "runs/pilot_pong_lr0p01",
+  "diagnostic_seed_base": 91000000,
+  "episodes": 8,
+  "mean_action_entropy_nats": 0.5402571997464122,
+  "saturated_fraction": 0.0,
+  "reward_mean": -21.0,
+  "episode_lengths": [
+    824,
+    826,
+    824,
+    885,
+    885,
+    884,
+    884,
+    824
+  ],
+  "note": "Pilot/tuning diagnostics; excluded from final held-out evaluation. Same diagnostic seeds for pilot comparison."
+}

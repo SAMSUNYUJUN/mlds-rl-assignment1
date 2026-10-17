@@ -1,0 +1,17 @@
+{
+  "complete": false,
+  "runs_plotted": [
+    "cartpole_basic",
+    "cartpole_baseline",
+    "pong_basic",
+    "pong_baseline"
+  ],
+  "evaluation_episodes": {
+    "cartpole_basic": 500,
+    "cartpole_baseline": 500,
+    "pong_basic": 500,
+    "pong_baseline": 0
+  },
+  "summary": "/Users/sunyujun03/Desktop/mlds-rl-assignment1/data/metrics_summary.json",
+  "unavailable_or_invalid": {}
+}

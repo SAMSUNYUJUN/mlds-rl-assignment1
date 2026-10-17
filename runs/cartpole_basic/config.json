@@ -1,0 +1,22 @@
+{
+  "game": "cartpole",
+  "baseline": false,
+  "seed": 101,
+  "episodes": 4096,
+  "lr": 0.01,
+  "device": "cpu",
+  "gamma": 0.95,
+  "hidden": 64,
+  "batch_size": 8,
+  "chunk_size": 512,
+  "loss_scale": 100.0,
+  "grad_clip": 10.0,
+  "baseline_decay": 0.9,
+  "train_seed_base": 10100000,
+  "eval_seed_base": 80000000,
+  "action_sampling": "categorical via independent per-episode NumPy RNG",
+  "objective": "E[sum_t gamma^t r_t]",
+  "time_weight": "gamma^t",
+  "aggregation": "sum over time / number of complete episodes / fixed 100",
+  "preprocessing": "raw 4-vector"
+}

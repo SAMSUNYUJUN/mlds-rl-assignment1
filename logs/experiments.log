@@ -1,0 +1,9 @@
+TRAIN cartpole_basic
+EVALUATE cartpole_basic
+TRAIN cartpole_baseline
+EVALUATE cartpole_baseline
+TRAIN pong_basic
+EVALUATE pong_basic
+TRAIN pong_baseline
+EVALUATE pong_baseline
+All four formal training and evaluation runs completed.

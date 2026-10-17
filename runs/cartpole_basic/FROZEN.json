@@ -1,0 +1,7 @@
+{
+  "file": "final.pt",
+  "sha256": "e488f799b850759c62943386dc9815cfb9d3e51e2a8887616a2b70a69e859510",
+  "episode": 4096,
+  "rule": "final checkpoint at preregistered training episode budget; no final evaluation consulted",
+  "frozen_at": 1792258775.587242
+}

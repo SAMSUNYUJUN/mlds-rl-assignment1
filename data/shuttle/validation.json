@@ -1,0 +1,683 @@
+{
+  "passed": true,
+  "test_count": 6,
+  "tests": [
+    {
+      "name": "independent_small_tree",
+      "purpose": "Check finite-horizon expectation and minimization against a distinct implementation.",
+      "theoretical_expectation": "An explicit tree over both actions and both arrival branches agrees with dynamic programming for all eight states and horizons 0 through 4.",
+      "method": "Recursively traverse the complete tiny decision tree without shared transition arrays or memoization; compare all 40 state/horizon pairs.",
+      "result": {
+        "comparisons": 40,
+        "max_absolute_error": 0.0,
+        "rows": [
+          {
+            "state": 0,
+            "horizon": 0,
+            "dp": 0.0,
+            "explicit_tree": 0.0
+          },
+          {
+            "state": 1,
+            "horizon": 0,
+            "dp": 0.0,
+            "explicit_tree": 0.0
+          },
+          {
+            "state": 2,
+            "horizon": 0,
+            "dp": 0.0,
+            "explicit_tree": 0.0
+          },
+          {
+            "state": 3,
+            "horizon": 0,
+            "dp": 0.0,
+            "explicit_tree": 0.0
+          },
+          {
+            "state": 4,
+            "horizon": 0,
+            "dp": 0.0,
+            "explicit_tree": 0.0
+          },
+          {
+            "state": 5,
+            "horizon": 0,
+            "dp": 0.0,
+            "explicit_tree": 0.0
+          },
+          {
+            "state": 6,
+            "horizon": 0,
+            "dp": 0.0,
+            "explicit_tree": 0.0
+          },
+          {
+            "state": 7,
+            "horizon": 0,
+            "dp": 0.0,
+            "explicit_tree": 0.0
+          },
+          {
+            "state": 0,
+            "horizon": 1,
+            "dp": 0.0,
+            "explicit_tree": 0.0
+          },
+          {
+            "state": 1,
+            "horizon": 1,
+            "dp": 2.0,
+            "explicit_tree": 2.0
+          },
+          {
+            "state": 2,
+            "horizon": 1,
+            "dp": 4.0,
+            "explicit_tree": 4.0
+          },
+          {
+            "state": 3,
+            "horizon": 1,
+            "dp": 6.0,
+            "explicit_tree": 6.0
+          },
+          {
+            "state": 4,
+            "horizon": 1,
+            "dp": 8.0,
+            "explicit_tree": 8.0
+          },
+          {
+            "state": 5,
+            "horizon": 1,
+            "dp": 10.0,
+            "explicit_tree": 10.0
+          },
+          {
+            "state": 6,
+            "horizon": 1,
+            "dp": 12.0,
+            "explicit_tree": 12.0
+          },
+          {
+            "state": 7,
+            "horizon": 1,
+            "dp": 14.0,
+            "explicit_tree": 14.0
+          },
+          {
+            "state": 0,
+            "horizon": 2,
+            "dp": 2.7,
+            "explicit_tree": 2.7
+          },
+          {
+            "state": 1,
+            "horizon": 2,
+            "dp": 6.5,
+            "explicit_tree": 6.5
+          },
+          {
+            "state": 2,
+            "horizon": 2,
+            "dp": 9.7,
+            "explicit_tree": 9.7
+          },
+          {
+            "state": 3,
+            "horizon": 2,
+            "dp": 9.7,
+            "explicit_tree": 9.7
+          },
+          {
+            "state": 4,
+            "horizon": 2,
+            "dp": 13.5,
+            "explicit_tree": 13.5
+          },
+          {
+            "state": 5,
+            "horizon": 2,
+            "dp": 17.3,
+            "explicit_tree": 17.3
+          },
+          {
+            "state": 6,
+            "horizon": 2,
+            "dp": 21.1,
+            "explicit_tree": 21.1
+          },
+          {
+            "state": 7,
+            "horizon": 2,
+            "dp": 24.9,
+            "explicit_tree": 24.9
+          },
+          {
+            "state": 0,
+            "horizon": 3,
+            "dp": 7.29,
+            "explicit_tree": 7.29
+          },
+          {
+            "state": 1,
+            "horizon": 3,
+            "dp": 10.73,
+            "explicit_tree": 10.73
+          },
+          {
+            "state": 2,
+            "horizon": 3,
+            "dp": 14.29,
+            "explicit_tree": 14.29
+          },
+          {
+            "state": 3,
+            "horizon": 3,
+            "dp": 14.29,
+            "explicit_tree": 14.29
+          },
+          {
+            "state": 4,
+            "horizon": 3,
+            "dp": 17.73,
+            "explicit_tree": 17.73
+          },
+          {
+            "state": 5,
+            "horizon": 3,
+            "dp": 21.439999999999998,
+            "explicit_tree": 21.439999999999998
+          },
+          {
+            "state": 6,
+            "horizon": 3,
+            "dp": 26.86,
+            "explicit_tree": 26.86
+          },
+          {
+            "state": 7,
+            "horizon": 3,
+            "dp": 32.28,
+            "explicit_tree": 32.28
+          },
+          {
+            "state": 0,
+            "horizon": 4,
+            "dp": 11.259,
+            "explicit_tree": 11.259
+          },
+          {
+            "state": 1,
+            "horizon": 4,
+            "dp": 14.860999999999999,
+            "explicit_tree": 14.860999999999999
+          },
+          {
+            "state": 2,
+            "horizon": 4,
+            "dp": 18.259,
+            "explicit_tree": 18.259
+          },
+          {
+            "state": 3,
+            "horizon": 4,
+            "dp": 18.259,
+            "explicit_tree": 18.259
+          },
+          {
+            "state": 4,
+            "horizon": 4,
+            "dp": 21.860999999999997,
+            "explicit_tree": 21.860999999999997
+          },
+          {
+            "state": 5,
+            "horizon": 4,
+            "dp": 25.409,
+            "explicit_tree": 25.409
+          },
+          {
+            "state": 6,
+            "horizon": 4,
+            "dp": 30.6265,
+            "explicit_tree": 30.6265
+          },
+          {
+            "state": 7,
+            "horizon": 4,
+            "dp": 36.735,
+            "explicit_tree": 36.735
+          }
+        ]
+      },
+      "interpretation": "Agreement supports the finite recursion including terminal value, branching probabilities, and queue clipping; the separate boundary test checks the shared timing convention."
+    },
+    {
+      "name": "hand_calculated_boundaries",
+      "purpose": "Check empty and underfull service, holding timing, and capped-arrival probability accumulation.",
+      "theoretical_expectation": "Empty dispatch costs 100, dispatching 14 or 15 leaves zero holding cost, dispatching 16 costs 102; waiting at 198 puts probability 0.8 on state 200; waiting at 200 costs 400 and remains at 200.",
+      "method": "Compare eight manually specified costs and outcome multisets with the constructed model.",
+      "result": {
+        "max_absolute_error": 0.0,
+        "cases": [
+          {
+            "state": 0,
+            "action": 0,
+            "cost": 0.0,
+            "next_states": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "probabilities": [
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.2
+            ],
+            "max_error": 0.0
+          },
+          {
+            "state": 0,
+            "action": 1,
+            "cost": 100.0,
+            "next_states": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "probabilities": [
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.2
+            ],
+            "max_error": 0.0
+          },
+          {
+            "state": 14,
+            "action": 1,
+            "cost": 100.0,
+            "next_states": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "probabilities": [
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.2
+            ],
+            "max_error": 0.0
+          },
+          {
+            "state": 15,
+            "action": 1,
+            "cost": 100.0,
+            "next_states": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "probabilities": [
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.2
+            ],
+            "max_error": 0.0
+          },
+          {
+            "state": 16,
+            "action": 1,
+            "cost": 102.0,
+            "next_states": [
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "probabilities": [
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.2
+            ],
+            "max_error": 0.0
+          },
+          {
+            "state": 198,
+            "action": 0,
+            "cost": 396.0,
+            "next_states": [
+              199,
+              200
+            ],
+            "probabilities": [
+              0.2,
+              0.8
+            ],
+            "max_error": 0.0
+          },
+          {
+            "state": 200,
+            "action": 0,
+            "cost": 400.0,
+            "next_states": [
+              200
+            ],
+            "probabilities": [
+              1.0
+            ],
+            "max_error": 0.0
+          },
+          {
+            "state": 200,
+            "action": 1,
+            "cost": 470.0,
+            "next_states": [
+              186,
+              187,
+              188,
+              189,
+              190
+            ],
+            "probabilities": [
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.2
+            ],
+            "max_error": 0.0
+          }
+        ]
+      },
+      "interpretation": "The implementation charges only the passengers left after service and clips arrivals after that charge. Duplicated clipped branches retain their total probability."
+    },
+    {
+      "name": "deterministic_zero_arrivals",
+      "purpose": "Test infinite-horizon decisions against an analytic deterministic limit.",
+      "theoretical_expectation": "With arrivals fixed to zero, enumerate m immediate dispatches then perpetual waiting; each candidate has a finite dispatch sum plus a geometric holding-cost tail. States 0,1,2 wait forever and all states 3 through 200 dispatch.",
+      "method": "Solve the zero-arrival model with VI and compare every state with the independently derived geometric-series formula.",
+      "result": {
+        "max_absolute_error": 1.798980520106852e-09,
+        "dispatch_states": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83,
+          84,
+          85,
+          86,
+          87,
+          88,
+          89,
+          90,
+          91,
+          92,
+          93,
+          94,
+          95,
+          96,
+          97,
+          98,
+          99,
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119,
+          120,
+          121,
+          122,
+          123,
+          124,
+          125,
+          126,
+          127,
+          128,
+          129,
+          130,
+          131,
+          132,
+          133,
+          134,
+          135,
+          136,
+          137,
+          138,
+          139,
+          140,
+          141,
+          142,
+          143,
+          144,
+          145,
+          146,
+          147,
+          148,
+          149,
+          150,
+          151,
+          152,
+          153,
+          154,
+          155,
+          156,
+          157,
+          158,
+          159,
+          160,
+          161,
+          162,
+          163,
+          164,
+          165,
+          166,
+          167,
+          168,
+          169,
+          170,
+          171,
+          172,
+          173,
+          174,
+          175,
+          176,
+          177,
+          178,
+          179,
+          180,
+          181,
+          182,
+          183,
+          184,
+          185,
+          186,
+          187,
+          188,
+          189,
+          190,
+          191,
+          192,
+          193,
+          194,
+          195,
+          196,
+          197,
+          198,
+          199,
+          200
+        ],
+        "values_at_0_1_2_3_15_16_200": [
+          0.0,
+          39.999999999100595,
+          79.99999999820119,
+          100.0,
+          100.0,
+          139.9999999991006,
+          3082.0866244670997
+        ],
+        "bellman_residual": 9.049472282640636e-11
+      },
+      "interpretation": "The exact low-state costs (0,40,80,100) and dispatch threshold 3 are recovered without stochastic arrivals. This tests discounting, stage costs, and repeated dispatches."
+    },
+    {
+      "name": "optimality_residual_and_solver_agreement",
+      "purpose": "Quantify infinite-horizon optimality and test an iterative fixed point against exact policy evaluation.",
+      "theoretical_expectation": "A discounted Bellman contraction bounds VI value error by residual/(1-gamma); stable PI has zero Bellman residual in exact arithmetic and should select the same strict minimizers.",
+      "method": "Compute max_s |min_a Q(s,a)-V(s)|, compare independent solution paths VI and PI, and check every selected action.",
+      "result": {
+        "vi_bellman_residual": 9.413270163349807e-11,
+        "vi_residual_error_bound": 1.88265403266996e-09,
+        "pi_bellman_residual": 9.094947017729282e-13,
+        "max_vi_pi_value_difference": 1.8649188859853894e-09,
+        "policy_disagreements": 0
+      },
+      "interpretation": "The residual provides an absolute numerical error certificate. Agreement alone is weaker because the solvers share model tensors, which is why independent analytic and hand-calculated tests are also included."
+    },
+    {
+      "name": "finite_infinite_tail_bound",
+      "purpose": "Check the zero-terminal-value interpretation and long finite horizon.",
+      "theoretical_expectation": "Nonnegative costs imply V_0^(500) <= V*. The omitted tail is at most gamma^500 max(c)/(1-gamma).",
+      "method": "Compare all 201 finite-horizon initial values with the converged PI values and compute the geometric bound.",
+      "result": {
+        "max_finite_infinite_difference": 4.940375220030546e-09,
+        "geometric_tail_bound": 6.838022067752704e-08,
+        "min_infinite_minus_finite": 4.939010977977887e-09
+      },
+      "interpretation": "Finite and infinite curves almost overlap because gamma^500 is tiny, rather than because the finite computation reused the infinite solution."
+    },
+    {
+      "name": "never_dispatch_reference",
+      "purpose": "Demonstrate that optimization improves a real task cost and verify capped absorbing behavior.",
+      "theoretical_expectation": "Never dispatching at state 200 incurs 400 forever, hence value 400/(1-.95)=8000. An optimal policy cannot cost more than this feasible policy at any state.",
+      "method": "Solve the never-dispatch policy exactly, check the hand-computed cap value, and compare against V* across all states.",
+      "result": {
+        "never_dispatch_value_at_200": 7999.999999999993,
+        "optimal_value_at_200": 3821.5864771838897,
+        "improvement_at_200": 4178.413522816103,
+        "minimum_improvement_over_states": 1627.2430883303336
+      },
+      "interpretation": "The optimized policy reduces discounted cost relative to a plausible poor policy, including at a congested initial state."
+    }
+  ],
+  "minimum_optimal_action_gap": 3.778004385495933,
+  "minimum_gap_state": 12,
+  "commands": [
+    ".venv/bin/python src/shuttle.py all",
+    ".venv/bin/python src/shuttle.py validate"
+  ],
+  "limits": "These are exact model-based checks, not field validation of passenger behavior. The artificial hard cap can discard arrivals; alternative cap and overflow-cost assumptions should be studied separately."
+}

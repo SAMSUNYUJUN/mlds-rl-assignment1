@@ -1,0 +1,2 @@
+{"episode": 40, "steps": 906, "elapsed": 0.1, "reward_mean": 32.625, "update_s": 0.001}
+{"episode": 80, "steps": 2722, "elapsed": 0.1, "reward_mean": 41.875, "update_s": 0.001}

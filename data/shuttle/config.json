@@ -1,0 +1,16 @@
+{
+  "capacity": 15,
+  "dispatch_cost": 100.0,
+  "holding_cost": 2.0,
+  "max_queue": 200,
+  "gamma": 0.95,
+  "arrivals": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "horizon": 500,
+  "tolerance": 1e-10
+}

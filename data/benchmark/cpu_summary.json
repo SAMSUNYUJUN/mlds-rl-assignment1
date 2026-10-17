@@ -1,0 +1,12 @@
+{
+  "device": "cpu",
+  "seconds": 300.91996729106177,
+  "episodes": 1272,
+  "environment_steps": 1264795,
+  "steps_per_second": 4203.094302401808,
+  "update_seconds_mean": 0.04205192689001912,
+  "update_seconds_median": 0.04217241599690169,
+  "process_peak_rss_bytes": 609402880,
+  "mps_current_allocated_bytes": 0,
+  "mps_driver_allocated_bytes": 0
+}

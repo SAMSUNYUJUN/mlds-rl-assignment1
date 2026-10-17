@@ -1,0 +1,6 @@
+A.L.E: Arcade Learning Environment (version 0.12.1+8a8fafb)
+[Powered by Stella]
+{"episode": 40, "steps": 40427, "elapsed": 9.6, "reward_mean": -20.75, "update_s": 0.031}
+{"episode": 80, "steps": 76135, "elapsed": 18.4, "reward_mean": -21.0, "update_s": 0.034}
+{"episode": 120, "steps": 109835, "elapsed": 26.8, "reward_mean": -20.875, "update_s": 0.036}
+{"episode": 128, "steps": 116773, "elapsed": 28.5, "reward_mean": -20.875, "update_s": 0.038}

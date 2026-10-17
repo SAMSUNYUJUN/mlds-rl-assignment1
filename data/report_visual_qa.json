@@ -1,0 +1,184 @@
+{
+  "passed": true,
+  "report": "output/pdf/assignment1_report.pdf",
+  "report_sha256": "38d086bb830063f97badbeeeec9de3e9af89a82ad4af23cf3f02c23bf1c7cd2e",
+  "page_count": 16,
+  "pages_examined": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "inspection_method": "All16 pages were individually rendered and visually inspected. After the sole final repair printing the complete GitHub URL visibly on page1, page1 was re-rendered and visually rechecked; pages2-16 were re-rendered and exactly match the previously inspected PNG bytes. Root independently reviewed all16 pages as an additional cross-check.",
+  "rendered_page_directory": "tmp/pdfs/final_pages",
+  "reviewed_at_utc": "2026-10-17T18:20:50.308236+00:00",
+  "per_page": [
+    {
+      "page": 1,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "Author, verified owner/repository and GitHub URL are correct. All four 4096/500 rows match raw summaries. Totals 2,000 evaluations, 1,290,169 evaluation steps and 10,689,593 train steps checked. Timeless repository-delivery note points to ACCEPTANCE.md. No overlaps. Final repair: full verified HTTPS repository URL is visibly printed on the link label and present in extracted PDF text; re-rendered page1 inspected with no crowding or clipping."
+    },
+    {
+      "page": 2,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "MDP states/actions/timing, positive cost convention, capped successors and V_500=0 formula checked. Figure1 axes/positive units/state range0..200 visible; endpoint costs match data. Formula box remains inside margins."
+    },
+    {
+      "page": 3,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "VI519, PI6, threshold13 and action gap3.778004 checked. Both value/policy charts have readable axes and captions; policy legend marks dispatch from13. No clipping."
+    },
+    {
+      "page": 4,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "Six substantive tests and eight hand-derived cases checked against shuttle validation JSON. Bellman residual/tail bound/VI-PI gap and boundary costs/probabilities are readable in correctly aligned tables."
+    },
+    {
+      "page": 5,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "J, RTG and gamma^t log-prob loss with fixed100 and episode mean checked against src.rl. Basic b0/no centering, detached advantage, single update after chunks, native v5/action2/3/image input, default seeded initialization and Adam defaults all present. Table/formulas fit."
+    },
+    {
+      "page": 6,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "Independent5min CPU/MPS timings, throughput/memory and CPU choice match benchmark JSON.4096/batch8/seed/LR rows, actual train times, excluded pilots, entropy rationale and0/512 clipping counts checked. Final text clears footer."
+    },
+    {
+      "page": 7,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "Figure4 basicCartPole train curve shows recurrent collapse; first/last100 raw and discounted means match CSV. Figure5 histogram n500/mean143.678/SD125.834 and axes/legend checked. Exclusive ends485/15/0 sum500."
+    },
+    {
+      "page": 8,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "Figures6/7 Pong basic use complete-game raw rewards. Last100raw-20.510 and J-1.1791 match logs; histogram500 mean-20.534/SD.706 covers full[-21,21] axis without hiding bars.500natural episodes."
+    },
+    {
+      "page": 9,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "Figures8/9 CartPole baseline use complete episodes and trailing100mean. First/last100 means and J checked. Histogram423.592/83.414, all axis labels/legend visible; exclusive ends311/187/2 correctly total500."
+    },
+    {
+      "page": 10,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "Figures10/11 Pong baseline raw curve remains losing; n500 mean-19.806 SD1.046 checked against raw data. Full reward range axis/legend/readable statistics.500natural episodes with no shortened games."
+    },
+    {
+      "page": 11,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "Hand RTG [5.6075,4.85,3], exact gradient .89805625, intentionally missing-weight bias .01194375, update direction and all first10 realCartPole rows checked. Table columns and45-step complete diagnostic explanation fit."
+    },
+    {
+      "page": 12,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "Actual imported-trainer tests show analytic update9.86875e-5, chunk parameter error2.98e-8, loss error2.87e-9, EMA timing and CPU resume exact0. Image pixel/difference checks and evidence limitations readable."
+    },
+    {
+      "page": 13,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "Both32-episode paired covariance rows match diagnosticJSON; saved baselines/ratios1.534e-10 and.538439 checked. Random references20.344/-20.594 and sampleSD8.295/.712 match records. Purpose/theory/method/result/interpretation are explicit, no causal overclaim."
+    },
+    {
+      "page": 14,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "Prior-batch EMA definition/decay.9, update timing and detach checked. Exact variance table and b2 reduction71.02%, action-dependent failure and same-batch mean ratio.75 match validation. Clear formula/table layout."
+    },
+    {
+      "page": 15,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "Actual mean/SD differences279.914/-42.420 and.728/.341 checked (CartPoleSDchange=-42.420). Pong46.16% gradient variance reduction is distinguished from higher rewardSD. Raw/discounted table, complete859-step Pongtrace, firstreward+1 at93/contribution.392711 and limits checked."
+    },
+    {
+      "page": 16,
+      "visually_examined": true,
+      "passed": true,
+      "notes": "Actual rebuild commands, source paths and three-month experiments are readable. OfficialALE andGymnasium hyperlinks use the expected absolute HTTPS URLs. No broken relative local-PDF hyperlink. Footer16 correct."
+    }
+  ],
+  "formulas": "MDP cost/transition/Bellman recursion and positive-cost convention; episode-start J, relative RTG, absolute gamma^t weighting, fixed100 scale/episode aggregation; detached prior-batchEMA and covariance n-1 formula match implementation.",
+  "numbers": "Four evaluation means/sampleSDs,4096train/500eval counts, all training first/last100 R/J, benchmark timing/memory, shuttle/PG/baseline validation, complete episode lengths and termination exclusivity matched saved real data.",
+  "axes_and_legends": "All eleven required plot contents inspected. Training axes use raw complete-episode reward with trailing100mean; initial growing window stated. Evaluation histogram labels/statistics are legible; Pong full[-21,21] range retained. Shuttle state/cost/action axes and threshold legend correct.",
+  "pagination_and_tables": "Sixteen sequential footers, intended section starts, aligned tables, consistent margins; no clipped text, image overlap, off-page text blocks, blank pages or orphan continuation pages.",
+  "links": {
+    "checked_expected_uris": [
+      "https://ale.farama.org/environments/pong/",
+      "https://github.com/SAMSUNYUJUN/mlds-rl-assignment1",
+      "https://gymnasium.farama.org/environments/classic_control/cart_pole/"
+    ],
+    "local_assignment_citation": "Plain project-root filename avoids an incorrect relative PDF URI.",
+    "github_verification_evidence": "data/repository.json; no live network needed to rebuild."
+  },
+  "editable_sources": [
+    "src/build_report.py",
+    "docs/report.md"
+  ],
+  "figure_caption_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "unresolved_issues": [],
+  "notes": "Passed visual review of every page: author and visible/clickable verified GitHub URL; all real experiment values/formulas; eleven plot contents with readable axes/legends; aligned tables,16 numbered pages and valid absolute links. Final repair changes only page1 URL label; page1 was visually rechecked and rendered pages2-16 are byte-for-byte identical to the prior fully reviewed render. No unresolved issues.",
+  "final_repair_review": {
+    "previous_report_sha256": "415ba389b9bc260187ae882b09f1b0c2fe9a1cd66bdbc034347572014dd22341",
+    "new_report_sha256": "38d086bb830063f97badbeeeec9de3e9af89a82ad4af23cf3f02c23bf1c7cd2e",
+    "changed_page": 1,
+    "visually_rechecked_pages": [
+      1
+    ],
+    "identical_rendered_pages": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "comparison_method": "Exact SHA-256 identity of each PNG rendered with the same PyMuPDF1.5x settings.",
+    "visible_repository_url": "https://github.com/SAMSUNYUJUN/mlds-rl-assignment1"
+  }
+}

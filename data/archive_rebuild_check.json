@@ -1,0 +1,10 @@
+{
+  "archive_extracted_without_git": true,
+  "report_rebuilt": true,
+  "returncode": 0,
+  "temporary_directory": "/private/tmp/mlds_assignment1_rebuild_k7uo8k52",
+  "stdout": "Created /private/tmp/mlds_assignment1_rebuild_k7uo8k52/rebuilt_report.pdf and docs/report.md from complete saved runs.",
+  "stderr": "",
+  "rebuilt_pages": 16,
+  "python_interpreter_invoked": "/Users/sunyujun03/Desktop/mlds-rl-assignment1/.venv/bin/python"
+}
