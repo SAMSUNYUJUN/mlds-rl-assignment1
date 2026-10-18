@@ -23,11 +23,11 @@ Updated: 2026-10-17, America/Chicago.
 
 No training, evaluation or diagnostic process remains active. Main runner PID 29746 (tool session 27060) ended successfully. Historical PIDs in process records are not evidence of a live run. Logs are retained under logs/; per-run status and frozen files are under runs/.
 
-## Remaining delivery actions
+## Delivery completed
 
 - Archive created at output/assignment1_Yujun_Sun.zip (approximately 14 MB); all manifest payload hashes and CRC pass. It excludes virtual environments, caches and redundant model copies. Extracting it into a clean temporary folder without .git successfully rebuilt the 16-page report using the project interpreter and saved data, without training. Evidence: data/archive_rebuild_check.json. Final audit/repackage refreshes this packet after status changes.
-- Obtain explicit user authorization before pushing to the existing public repository https://github.com/SAMSUNYUJUN/mlds-rl-assignment1. Native read-only gh requests already verified authenticated account SAMSUNYUJUN and the repository. No remote creation/push has occurred.
-- After authorized push, verify actual remote commit, record remote_code_delivered=true, rerun acceptance and repackage current records. Until then, the entire assignment is not declared delivered.
+- User explicitly authorized the final push. Source commit 74251b40ca7e59ea7108d2ac3ad4afd1230901a7 is delivered to existing public repository https://github.com/SAMSUNYUJUN/mlds-rl-assignment1 on main. Native GitHub API SHA matches the local commit; no new repository was created.
+- Remote delivery is recorded in data/repository.json. Required-remote acceptance and the archive are refreshed with current delivery records; final status metadata is synced without retraining. All requested scientific work and repository delivery are complete.
 - Canvas submission is the user's action.
 
 ## Recovery and reproduction

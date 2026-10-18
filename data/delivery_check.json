@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "generated_unix_seconds": 1792261408.611357,
+  "generated_unix_seconds": 1792285278.669573,
   "local_data_complete": true,
-  "remote_code_delivered": false,
+  "remote_code_delivered": true,
   "archive_verified": true,
-  "entire_assignment_delivered": false,
-  "require_remote": false,
+  "entire_assignment_delivered": true,
+  "require_remote": true,
   "gate_passed": true,
   "note": "Default gate covers local scientific/report evidence. Remote delivery and archive are separately explicit; Canvas submission remains with the user.",
   "checks": [
@@ -863,7 +863,7 @@
         "repo": "mlds-rl-assignment1",
         "url": "https://github.com/SAMSUNYUJUN/mlds-rl-assignment1",
         "verification": "Native read-only gh auth status, gh api user --jq .login, gh repo view --json name,owner,url,isPrivate,defaultBranchRef",
-        "push_authorized": false
+        "push_authorized": true
       },
       "error": null
     },
@@ -1089,11 +1089,15 @@
       "evidence": [
         "data/repository.json"
       ],
-      "passed": false,
+      "passed": true,
       "required_local": false,
       "scope": "remote",
-      "details": null,
-      "error": "ValueError: Remote code delivery remains pending; no push is implied by local completion. See data/repository.json."
+      "details": {
+        "remote_code_delivered": true,
+        "repository": "https://github.com/SAMSUNYUJUN/mlds-rl-assignment1",
+        "basis": "Explicit persisted delivery record; this checker neither pushes nor contacts GitHub."
+      },
+      "error": null
     },
     {
       "id": "archive",
@@ -17738,8 +17742,6 @@
     }
   },
   "failed_required_local": [],
-  "pending_remote": [
-    "Obtain/retain user push authorization, deliver to the verified repository, then record remote_code_delivered=true only after success."
-  ],
-  "reproduction_command": ".venv/bin/python scripts/check_delivery.py"
+  "pending_remote": [],
+  "reproduction_command": ".venv/bin/python scripts/check_delivery.py --require-remote"
 }

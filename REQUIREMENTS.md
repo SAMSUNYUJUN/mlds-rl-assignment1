@@ -13,5 +13,5 @@
 - [x] Eleven required plot contents from saved data, quantitative tests and traces.
 - [x] English report PDF and editable source; visual inspection of every page.
 - [x] Chinese learning notes, README commands, evidence acceptance checklist.
-- [ ] Verify specified repository and arrange authorized final code transfer.
+- [x] Verify specified repository and complete authorized final code transfer.
 - [x] Final archive excludes environments/caches/redundant data.

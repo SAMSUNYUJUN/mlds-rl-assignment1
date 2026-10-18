@@ -87,4 +87,4 @@ Replotting and report generation use saved data; no retraining is required. Repo
 
 ## Repository and submission
 
-Existing configured GitHub repository: [SAMSUNYUJUN/mlds-rl-assignment1](https://github.com/SAMSUNYUJUN/mlds-rl-assignment1). This identity comes from the actual origin and authenticated `gh api user`, not `git user.name`. Initial sandboxed `gh auth status` misleadingly reported an invalid token; outside the network sandbox authentication succeeded. Final push requires user authorization. The user performs the final Canvas submission.
+Delivered repository: [SAMSUNYUJUN/mlds-rl-assignment1](https://github.com/SAMSUNYUJUN/mlds-rl-assignment1), branch `main`. The user explicitly authorized the push, and the source commit was verified against the GitHub API. Identity comes from the actual origin and authenticated `gh api user`, not `git user.name`. Initial sandboxed `gh auth status` misleadingly reported an invalid token; outside the network sandbox authentication succeeded. Authorization and delivery evidence are in `data/repository.json` and `ACCEPTANCE.md`. The user performs the final Canvas submission.

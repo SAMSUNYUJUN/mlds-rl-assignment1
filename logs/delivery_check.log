@@ -1,8 +1,8 @@
 {
   "gate_passed": true,
   "local_data_complete": true,
-  "remote_code_delivered": false,
+  "remote_code_delivered": true,
   "archive_verified": true,
-  "entire_assignment_delivered": false,
+  "entire_assignment_delivered": true,
   "failed_required_local": []
 }

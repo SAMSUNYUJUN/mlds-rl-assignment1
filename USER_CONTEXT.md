@@ -8,6 +8,6 @@
 - Shuttle CPU; CartPole starts CPU; Pong CPU/MPS timed comparison before formal device selection.
 - Only supplied teaching material: `mlds_assignment1.pdf`, four pages, read in full. Due date printed: October 26, 2026, 11:59 pm. No timezone is specified in the PDF.
 - No course number or additional AI policy supplied.
-- Existing origin: `https://github.com/SAMSUNYUJUN/mlds-rl-assignment1.git`. Git has no commits; tracking origin/main is gone. Initial sandboxed `gh auth status` misleadingly reported an invalid token because network access was blocked. Outside the network sandbox, `gh auth status` and `gh api user --jq .login` successfully verified authenticated identity `SAMSUNYUJUN`.
-- No authorization to create/push/publish a remote repository. Canvas submission remains user's action.
+- Existing origin: `https://github.com/SAMSUNYUJUN/mlds-rl-assignment1.git`. At initial inspection, Git had no commits and tracking origin/main was gone. Initial sandboxed `gh auth status` misleadingly reported an invalid token because network access was blocked. Outside the network sandbox, `gh auth status` and `gh api user --jq .login` successfully verified authenticated identity `SAMSUNYUJUN`.
+- User explicitly authorized pushing to the existing public repository on 2026-10-17 (reply: “允许推送到该仓库”). Source commit 74251b40ca7e59ea7108d2ac3ad4afd1230901a7 was pushed and verified against the GitHub API. No new repository was created. Canvas submission remains the user's action.
 - Local dependency installation, implementation, training, evaluation, documentation, and packaging authorized.

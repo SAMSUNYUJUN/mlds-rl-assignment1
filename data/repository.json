@@ -5,8 +5,13 @@
   "owner": "SAMSUNYUJUN",
   "is_private": false,
   "default_branch_at_initial_check": "",
-  "remote_code_delivered": false,
-  "push_authorized": false,
+  "remote_code_delivered": true,
+  "push_authorized": true,
   "verification": "Native read-only gh auth status, gh api user --jq .login, gh repo view --json name,owner,url,isPrivate,defaultBranchRef",
-  "note": "Initial sandbox-only authentication failure was a network restriction; native authenticated requests succeeded. Remote code delivery awaits explicit user authorization after reviewable local deliverables exist."
+  "note": "Initial sandbox-only authentication failure was a network restriction. Native authentication and authorized remote delivery both succeeded.",
+  "authorization": "Explicit user reply on 2026-10-17: 允许推送到该仓库",
+  "verified_source_commit": "74251b40ca7e59ea7108d2ac3ad4afd1230901a7",
+  "remote_default_branch": "main",
+  "remote_verification": "GitHub commits/main API SHA equals local git rev-parse HEAD after successful HTTPS push; repository API confirms public URL and default branch main.",
+  "verification_scope": "Formal source, saved experiment records, frozen models and report verified at this source commit. Final delivery-status and packaging metadata updates follow as a separate commit."
 }
