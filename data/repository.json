@@ -13,5 +13,7 @@
   "verified_source_commit": "74251b40ca7e59ea7108d2ac3ad4afd1230901a7",
   "remote_default_branch": "main",
   "remote_verification": "GitHub commits/main API SHA equals local git rev-parse HEAD after successful HTTPS push; repository API confirms public URL and default branch main.",
-  "verification_scope": "Formal source, saved experiment records, frozen models and report verified at this source commit. Final delivery-status and packaging metadata updates follow as a separate commit."
+  "verification_scope": "Formal source, saved experiment records, frozen models and report verified at this source commit. Final delivery-status and packaging metadata updates follow as a separate commit.",
+  "latest_report_sha256": "a05f49e547e6e4d280b3b9d2679f1393b25aec979b894880b77c05b64f741474",
+  "latest_report_revision": "Academic prose cleanup on 2026-10-17; experiment data and models unchanged."
 }

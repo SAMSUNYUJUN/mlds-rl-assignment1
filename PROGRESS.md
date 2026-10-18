@@ -15,7 +15,7 @@ Updated: 2026-10-17, America/Chicago.
 - Final mean/sample SD: CartPole basic 143.678/125.833885; CartPole baseline 423.592/83.414108; Pong basic -20.534/0.705578; Pong baseline -19.806/1.046209. All 1,000 Pong evaluations naturally terminated; no point/rally pseudo-episodes.
 - Independent learned-policy diagnostics: 32 full episodes per baseline policy plus 32 uniform-reference episodes per game. Pong saved baseline reduces gradient covariance trace by approximately 46.16%; reward SD nevertheless increases. Actual ten-step image/action/return trace preserved. These episodes are excluded from final 2,000 evaluations.
 - Eleven required figure contents and comparison panels generated from saved raw data; optimizer-update audit confirms zero clipped updates in every run.
-- English report complete: output/pdf/assignment1_report.pdf, 16 pages; editable sources docs/report.md and src/build_report.py. All current pages visually inspected, all numbers/formulas/axes/legends/tables/pagination/links checked. SHA-256 38d086bb830063f97badbeeeec9de3e9af89a82ad4af23cf3f02c23bf1c7cd2e. Matching QA in data/report_visual_qa.json.
+- English report complete: output/pdf/assignment1_report.pdf, 16 pages; editable sources docs/report.md and src/build_report.py. All current pages visually inspected, all numbers/formulas/axes/legends/tables/pagination/links checked. SHA-256 a05f49e547e6e4d280b3b9d2679f1393b25aec979b894880b77c05b64f741474. Matching QA in data/report_visual_qa.json.
 - Chinese learning guide explains algorithms, code, tests and actual conclusions for every figure. README contains actual setup, training, evaluation, resume, replot and report commands.
 - Final local scientific/report acceptance passes with no failed required local checks; data/delivery_check.json and ACCEPTANCE.md retain the evidence.
 
@@ -27,7 +27,7 @@ No training, evaluation or diagnostic process remains active. Main runner PID 29
 
 - Archive created at output/assignment1_Yujun_Sun.zip (approximately 14 MB); all manifest payload hashes and CRC pass. It excludes virtual environments, caches and redundant model copies. Extracting it into a clean temporary folder without .git successfully rebuilt the 16-page report using the project interpreter and saved data, without training. Evidence: data/archive_rebuild_check.json. Final audit/repackage refreshes this packet after status changes.
 - User explicitly authorized the final push. Source commit 74251b40ca7e59ea7108d2ac3ad4afd1230901a7 is delivered to existing public repository https://github.com/SAMSUNYUJUN/mlds-rl-assignment1 on main. Native GitHub API SHA matches the local commit; no new repository was created.
-- Remote delivery is recorded in data/repository.json. Required-remote acceptance and the archive are refreshed with current delivery records; final status metadata is synced without retraining. All requested scientific work and repository delivery are complete.
+- Remote delivery is recorded in data/repository.json. Required-remote acceptance and the archive are refreshed with current delivery records; final status metadata is synced without retraining. The recorded experiments and repository delivery are complete; both Pong policies lost every final evaluation game, so this is not a claim that all learning objectives were achieved.
 - Canvas submission is the user's action.
 
 ## Recovery and reproduction
@@ -51,3 +51,7 @@ Audit/package commands:
 ```
 
 For an actually unfinished future training run, the driver supports update-boundary checkpoint recovery via caffeinate -i .venv/bin/python -u scripts/run_experiments.py; it skips the current four frozen completed models. Never remove frozen manifests to restart these models accidentally.
+
+## Report editorial revision (2026-10-17)
+
+Removed task-material inspection, deadlines/timezone, authentication/API checks, permission and delivery narration from the academic report. Preserved methods, results, quantitative validation, reproducibility, required repository identity/link and explicit performance limitations. Rebuilt the 16-page PDF from saved data and visually inspected every page. No experiments or checkpoints changed. Current PDF SHA-256: a05f49e547e6e4d280b3b9d2679f1393b25aec979b894880b77c05b64f741474.

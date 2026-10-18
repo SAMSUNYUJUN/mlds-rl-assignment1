@@ -1,18 +1,16 @@
 # Reinforcement Learning Assignment 1
 
-Yujun Sun | Local Apple M4 Pro experiments | October 2026
+Yujun Sun | October 2026
 
-This report solves the shuttle dispatch MDP by three exact finite-state methods and implements Monte Carlo REINFORCE for CartPole-v1 and Pong-v5, with and without a prior-batch scalar baseline. All reported rewards, timings, validation values, and plots come from saved local runs.
+This report studies shuttle dispatching using finite-horizon enumeration, value iteration, and policy iteration. It also compares Monte Carlo REINFORCE with and without a scalar baseline on CartPole-v1 and Pong-v5, examining learning performance, gradient variance, and algorithm correctness.
 
-### Submission identity and evidence
+### Code and data
 
-GitHub username: SAMSUNYUJUN. Repository: mlds-rl-assignment1. Read-only GitHub API checks verified the authenticated account and the existing public repository, which was initially empty. Repository delivery status and authorization are recorded in ACCEPTANCE.md.
+GitHub username: SAMSUNYUJUN. Repository: mlds-rl-assignment1.
 
 [GitHub repository: https://github.com/SAMSUNYUJUN/mlds-rl-assignment1](https://github.com/SAMSUNYUJUN/mlds-rl-assignment1)
 
-The PDF assignment was the only teaching material supplied. Its four pages were read in full. It specifies a due date of October 26, 2026 at 11:59 pm without a timezone. No course number or additional AI-use rule has been inferred.
-
-### Frozen final-checkpoint evaluation
+### Evaluation summary
 
 | Model | Train episodes | Eval episodes | Mean reward | Sample SD |
 | --- | --- | --- | --- | --- |
@@ -21,7 +19,7 @@ The PDF assignment was the only teaching material supplied. Its four pages were 
 | CartPole baseline | 4096 | 500 | 423.592 | 83.414 |
 | Pong baseline | 4096 | 500 | -19.806 | 1.046 |
 
-Total: 2,000 complete held-out evaluation episodes, 1,290,169 evaluation environment steps, and 10,689,593 formal training steps. Each model was frozen before its final evaluation. The policy samples its action distribution throughout evaluation; no argmax or checkpoint reselection uses these 500 rewards.
+The experiments comprise 10,689,593 training steps and 2,000 held-out evaluation episodes totaling 1,290,169 steps. Evaluation samples actions from each fixed final policy. Checkpoints are selected at the predetermined training endpoint, independently of evaluation rewards.
 
 Reward means and sample standard deviations describe raw undiscounted complete-episode totals. They are distinct from the discounted optimization objective and from the variance of a gradient estimator. All four models are single-training-seed experiments; comparisons describe these runs rather than population-level causal effects.
 
@@ -38,9 +36,9 @@ P(s_next=j | s,a) = (1/5) sum_{A=1}^5 1[j=s_next(s,a,A)]
 V_pi(s) = E_pi[sum_{t=0}^infinity 0.95^t c(s_t,a_t) | s_0=s]
 ```
 
-All shuttle values are nonnegative discounted costs to minimize, not negative rewards. Empty or underfilled dispatch is allowed, costs 100, and takes min(s,15) passengers. At most one shuttle leaves per epoch. The artificial queue cap discards arrivals above 200 without an overflow penalty; equal clipped successor states accumulate probability. These are explicit modeling assumptions, not additional PDF quotations.
+Value functions represent expected discounted costs, which are minimized. Empty or underfilled dispatch is allowed, costs 100, and serves min(s,15) passengers. At most one shuttle leaves per epoch. Arrivals above the queue cap of 200 are discarded without an overflow penalty; equal clipped successor states accumulate probability. Underfilled service and overflow handling are modeling assumptions.
 
-No further classroom definition of Enumeration was supplied. I therefore enumerate the two actions and five arrival branches in finite-horizon backward recursion, with T=500 and terminal V_T(s)=0. This evaluates the decision tree through shared subproblems instead of enumerating exponentially many complete 500-step trajectories.
+Finite-horizon enumeration considers both actions and all five arrival outcomes through backward recursion, with T=500 and terminal value V_T(s)=0. Reusing state values at each time step avoids exponential enumeration of complete trajectories.
 
 ```text
 V_t(s) = min_a { c(s,a) + 0.95 sum_j P(j|s,a) V_{t+1}(j) }
@@ -109,16 +107,16 @@ loss = -(1/(100 B)) sum_{episode i=1}^B sum_{t=0}^{L_i-1}
        gamma^t log pi_theta(a_it | x_it) detach(G_it - b)
 ```
 
-The absolute-time gamma^t factor matches the declared episode-start objective; it is separate from the discount inside G_t. Time steps are summed and complete episodes are averaged, with the same fixed positive scale 100 in every model. The basic estimator sets b=0 and never subtracts an episode/batch mean or applies z-score normalization. Adam minimizes the loss; clipping bounds the aggregate gradient norm at 10. These optimizer choices are recorded rather than claimed to preserve an unclipped update exactly.
+The absolute-time gamma^t factor corresponds to the episode-start objective and is separate from the discount inside G_t. Time steps are summed and complete episodes are averaged, with the same fixed scale 100 in every model. The basic estimator uses b=0 and uncentered returns. Adam minimizes the loss, with an aggregate gradient-norm limit of 10.
 
 | Environment | Policy input and network | Episode completion |
 | --- | --- | --- |
 | CartPole-v1 | Raw 4-vector -> Linear(4,64) -> Tanh -> Linear(64,2); sampled left/right. | Natural failure or official 500-step TimeLimit. |
-| ALE/Pong-v5 | Game RGB image -> PDF crop/downsample/background mask -> 80x80 frame difference -> Linear(6400,64) -> ReLU -> Linear(64,2). Outputs map to environment actions [2,3]. | Natural game end or official ALE 108,000-frame cap; no point/rally boundaries. |
+| ALE/Pong-v5 | RGB image -> crop/downsample/background mask -> 80x80 frame difference -> Linear(6400,64) -> ReLU -> Linear(64,2). Outputs map to environment actions [2,3]. | Natural game end or official ALE 108,000-frame cap; no point/rally boundaries. |
 
-Network initialization uses PyTorch default nn.Linear parameter initialization after manual_seed: matched methods use seed 101 for CartPole and 202 for Pong, without pretrained weights. Adam uses betas=(0.9,0.999), eps=1e-8 and weight_decay=0 under the pinned PyTorch 2.14.1 runtime. Reset/image-history initialization is separate from weight initialization.
+Networks use PyTorch default nn.Linear random initialization, with matched seeds 101 for CartPole and 202 for Pong. Adam uses betas=(0.9,0.999), eps=1e-8 and weight_decay=0.
 
-The installed official registry resolves the requested Pong-v5 as ALE/Pong-v5 (Gymnasium 1.4.0, ale-py 0.12.1). The six actual action meanings are NOOP, FIRE, RIGHT, LEFT, RIGHTFIRE, LEFTFIRE. The implementation selects only RIGHT and LEFT, indices 2 and 3. Inputs are images, not RAM.
+The Pong environment is ALE/Pong-v5 in Gymnasium 1.4.0 with ale-py 0.12.1. Its six action meanings are NOOP, FIRE, RIGHT, LEFT, RIGHTFIRE, LEFTFIRE. The policy selects RIGHT or LEFT, mapped to indices 2 and 3, using RGB game observations.
 
 Pong uses frameskip=4, sticky action probability=0.25, mode=0, difficulty=0, and the minimal six-action space. Crop rows 35:195, downsample both dimensions by 2, use the red channel, erase colors 144/109 and map other nonzero pixels to 1. Input is current minus previous binary frame, with a zero difference at reset. No frame stack, FIRE/NOOP wrapper, point-based termination, reward clipping, or custom episode shortening is used.
 
@@ -126,9 +124,9 @@ Rollouts run without autograd; the policy parameters remain fixed for the entire
 
 <!-- page break -->
 
-## 5. Local benchmark, budgets, and checkpoints
+## 5. Experimental setup and training budgets
 
-All runs were executed on the verified native arm64 Apple M4 Pro MacBook Pro with 24 GB unified memory, macOS 15.6.1, Python 3.12.14, and PyTorch 2.14.1. The environment inspection reports machine=arm64, MPS available=True. No remote or paid compute was used. Shuttle and CartPole use CPU.
+Experiments ran on an Apple M4 Pro MacBook Pro with 24 GB unified memory, macOS 15.6.1, native arm64 Python 3.12.14, and PyTorch 2.14.1. Shuttle dispatching and CartPole use the CPU. Pong device selection compares CPU and MPS performance.
 
 Pong CPU/MPS timing uses the same 64-unit policy, image preprocessing, complete-episode environment configuration, seed sequence, batch size, loss, and Adam update. Throughput includes rollout, Python environment stepping, preprocessing, inference, return calculation, and updates. Device selection uses measured end-to-end environment steps per second rather than matrix throughput alone.
 
@@ -137,7 +135,7 @@ Pong CPU/MPS timing uses the same 64-unit policy, image preprocessing, complete-
 | cpu | 5.0 min | 1,264,795 | 4,203.1 | 0.04 s | 581.2 MiB |
 | mps | 5.0 min | 969,323 | 3,217.4 | 0.09 s | 902.3 MiB |
 
-Selected Pong device: cpu. highest measured full-rollout-plus-update environment steps per second. Each device trial runs in a separate process, so peak RSS is an independent process high-water mark. MPS allocation counters in data/benchmark/decision.json are additional device-memory snapshots, not independent physical-memory peaks.
+Pong uses CPU, which achieved the higher end-to-end throughput. Each device was measured in a separate process; peak memory is the process RSS high-water mark.
 
 | Run | Seed | Episodes | Batch | Adam LR | Device | Train time |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -146,7 +144,7 @@ Selected Pong device: cpu. highest measured full-rollout-plus-update environment
 | CartPole baseline | 101 | 4096 | 8 | 0.01 | cpu | 10.28 s |
 | Pong baseline | 202 | 4096 | 8 | 0.001 | cpu | 15.8 min |
 
-### Pilot attempts (excluded from formal results)
+### Learning-rate pilots
 
 | Pilot | Episodes | Adam LR | Last up-to-100 mean | Time |
 | --- | --- | --- | --- | --- |
@@ -158,13 +156,13 @@ Pong uses Adam 0.001 after 128-episode matched tuning pilots: mean diagnostic ac
 
 Gradient clipping bound 10 was monitored: clipped updates / all updates = CartPole basic 0/512; Pong basic 0/512; CartPole baseline 0/512; Pong baseline 0/512. A zero count means clipping did not alter the updates in that run.
 
-Formal training stops at the recorded episode budgets; smoke tests and timed benchmark episodes are excluded. The frozen checkpoint is the final model at that budget, recorded in FROZEN.json with a SHA-256 checksum before held-out evaluation. Neither the 500 final evaluation rewards nor their histograms select a checkpoint. Hyperparameter choices, initial failures, and the budget decision are documented in docs/experiment_budget.md; each run preserves its effective configuration.
+Each model trains for 4,096 complete episodes, comprising 512 updates of eight episodes. Pilot and benchmark episodes are excluded from this budget. The policy after the final update is evaluated on 500 complete episodes using seeds independent of training and tuning. This fixed stopping rule does not use evaluation rewards for checkpoint selection.
 
-Checkpoints include policy, Adam, episode/step counts, baseline, time and update count. Independent episode seeds permit batch-boundary recovery. Training sampling_policy_update identifies the policy before its consuming optimizer update; checkpoint tags are logical sampling-update labels, not retained filenames. Evaluation rows map to the frozen file hash. Atomic saves/log trimming prevent duplicate uncommitted batches.
+Batch-boundary checkpoints store the policy, Adam state, baseline, episode and step counts, and seed mappings for reproducible resumption.
 
 <!-- page break -->
 
-## 6. CartPole basic: actual results
+## 6. CartPole basic: results
 
 4,096 train episodes; 1,384,029 steps; seed 101; Adam 0.01; cpu. First to last 100 means: raw R 36.580 to 453.460; discounted J 15.3171 to 19.8185. The moving window grows from 1 to 100, then stays 100.
 
@@ -176,7 +174,7 @@ Final mean=143.678; sample SD=125.834 (ddof=1); range [11, 500]; mean length=143
 
 <!-- page break -->
 
-## 7. Pong basic: actual results
+## 7. Pong basic: results
 
 4,096 train episodes; 4,016,974 steps; seed 202; Adam 0.001; cpu. First to last 100 means: raw R -20.500 to -20.510; discounted J -1.4373 to -1.1791. The moving window grows from 1 to 100, then stays 100.
 
@@ -184,11 +182,11 @@ Final mean=143.678; sample SD=125.834 (ddof=1); range [11, 500]; mean length=143
 
 ![Figure 7. Pong basic: 500 frozen-policy complete-episode rewards.](../figures/pong_basic_evaluation.png)
 
-Final mean=-20.534; sample SD=0.706 (ddof=1); range [-21, -17]; mean length=1,019.4 steps. Exclusive end cases: natural only 500, time-limit only 0, both flags 0; total 500. Flags may coincide on CartPole step 500.
+Final mean=-20.534; sample SD=0.706 (ddof=1); range [-21, -17]; mean length=1,019.4 steps. Exclusive end cases: natural only 500, time-limit only 0, both flags 0; total 500.
 
 <!-- page break -->
 
-## 8. CartPole baseline: actual results
+## 8. CartPole baseline: results
 
 4,096 train episodes; 1,290,047 steps; seed 101; Adam 0.01; cpu. First to last 100 means: raw R 39.490 to 404.090; discounted J 15.7873 to 20.0000. The moving window grows from 1 to 100, then stays 100.
 
@@ -200,7 +198,7 @@ Final mean=423.592; sample SD=83.414 (ddof=1); range [95, 500]; mean length=423.
 
 <!-- page break -->
 
-## 9. Pong baseline: actual results
+## 9. Pong baseline: results
 
 4,096 train episodes; 3,998,543 steps; seed 202; Adam 0.001; cpu. First to last 100 means: raw R -20.530 to -19.980; discounted J -1.4323 to -0.2470. The moving window grows from 1 to 100, then stays 100.
 
@@ -208,11 +206,11 @@ Final mean=423.592; sample SD=83.414 (ddof=1); range [95, 500]; mean length=423.
 
 ![Figure 11. Pong baseline: 500 frozen-policy complete-episode rewards.](../figures/pong_baseline_evaluation.png)
 
-Final mean=-19.806; sample SD=1.046 (ddof=1); range [-21, -14]; mean length=993.6 steps. Exclusive end cases: natural only 500, time-limit only 0, both flags 0; total 500. Flags may coincide on CartPole step 500.
+Final mean=-19.806; sample SD=1.046 (ddof=1); range [-21, -14]; mean length=993.6 steps. Exclusive end cases: natural only 500, time-limit only 0, both flags 0; total 500.
 
 <!-- page break -->
 
-## 10. Policy-gradient correctness evidence
+## 10. Policy-gradient validation
 
 ```sh
 .venv/bin/python -m src.validate_rl --output data/validation/rl.json
@@ -228,7 +226,7 @@ Purpose: validate the stochastic estimator without Monte Carlo error. Theory: th
 
 The float64 PyTorch policy-loss derivative is -0.89805625; the central finite-difference objective derivative is 0.89805625. One small SGD step raises J from 3.711625 to 3.719701. This verifies the loss sign, not Adam convergence in Pong.
 
-### Real CartPole first-ten-step trace
+### CartPole first-ten-step trace
 
 Purpose: connect the return equations to real state/action/reward transitions. A separate uniform policy uses CartPole reset seed 74219 and Python action seed 74220. It runs the entire episode before returns are calculated; displaying ten rows does not truncate training or evaluation.
 
@@ -249,15 +247,15 @@ The complete diagnostic episode length is 45; total reward is 45.0. Its full sta
 
 <!-- page break -->
 
-## 11. Production trainer and local controls
+## 11. Implementation validation
 
-Purpose: verify that the actual imported trainer implements the validated estimator, memory-bounded update, baseline timing, preprocessing, and checkpoint recovery. This test calls src.rl.update rather than a parallel demonstration implementation.
+The implementation tests exercise the policy-gradient estimator, chunked updates, baseline timing, preprocessing, and checkpoint recovery through the training function src.rl.update.
 
 Exact complete trajectory enumeration at p=.5 gives dJ/dtheta=.986875; /100 loss and SGD .01 gives theta=.0000986875 for b=0 and b=2. Chunking and serialization must preserve the update.
 
 Method: Import src.rl; run real update() on all eight trajectories; independently calculate a single-graph Adam update; verify synthetic image pixels; save/load model+Adam+EMA between actual CartPole batches with deterministic episode seeds.
 
-| Production check | Actual quantitative evidence | Interpretation |
+| Validation check | Quantitative result | Interpretation |
 | --- | --- | --- |
 | Return recurrence | 8.88e-16 max absolute error | The production function agrees with direct hand sums. |
 | Exact expected update, b=0 | 9.87e-05 vs 9.87e-05 | Loss sign, gamma weights, fixed scale and batch average agree. |
@@ -267,13 +265,11 @@ Method: Import src.rl; run real update() on all eight trajectories; independentl
 | Checkpoint roundtrip | Next rollouts identical=True; parameter max error=0.000 | Saved model, Adam and baseline reproduce an actual next CPU update. |
 | Image semantics | Test mask pixels=[0, 0, 1, 1]; signed difference range=[-1, 0] | Background removal and negative motion pixels survive preprocessing without mutating the raw image. |
 
-Actual CartPole rollout lengths in the checkpoint experiment were 17, 16, 16, 45, 20, 26, 21, 14. The resumed baseline was exactly equal=True. These are update-boundary CPU checks; they do not claim bitwise CPU/MPS equality or recovery inside an unfinished episode.
-
-Additional fixed-checkpoint random-policy and gradient diagnostics are saved in data/validation/gradient_diagnostic.json. Their measured results and interpretation appear below.
+CartPole rollout lengths in the checkpoint experiment were 17, 16, 16, 45, 20, 26, 21, 14. Resumed and uninterrupted runs produced identical trajectories, parameter updates, and baseline values. The comparison covers CPU execution at complete update boundaries.
 
 <!-- page break -->
 
-## 12. Fixed-checkpoint empirical diagnostics
+## 12. Fixed-policy gradient variance
 
 Purpose: measure the implemented saved scalar baseline on actual learned-policy trajectories, and compare task behavior with an uninformed policy. Theory: a scalar fixed before actions preserves the expected gradient but can increase or reduce estimator variance. No optimizer or parameter update occurs; these diagnostics are collected after checkpoints are frozen.
 
@@ -312,7 +308,7 @@ These diagnostics do not use the final held-out 500-episode samples to select a 
 
 <!-- page break -->
 
-## 13. Baseline mechanism and evidence
+## 13. Baseline mechanism and variance
 
 The baseline is a scalar EMA carried from earlier complete batches. It is initialized at zero, frozen throughout rollout and the corresponding policy update, and changes only after that update. Its target is the gamma^t-weighted mean return-to-go in the completed batch. It is constant across current states/actions; no value network or critic loss is used.
 
@@ -332,19 +328,19 @@ Because b_k is fixed before any current-batch actions are sampled, its score-fun
 | 2.0 | 0.89805625 | 2.01123013 |
 | 8.0 | 0.89805625 | 16.89117447 |
 
-Purpose: check action independence and variance rather than tensor shapes. Theory: fixed b leaves the expected gradient unchanged. Method: exact eight-trajectory enumeration. Actual b=2 reduces variance by 71.02%; b=8 increases it. An intentionally action-dependent baseline instead has expected gradient 2.30e-17, revealing its bias. Autograd confirms detached baseline receives no gradient (True).
+Purpose: check action independence and gradient-estimator variance. Theory: fixed b leaves the expected gradient unchanged. Method: exact eight-trajectory enumeration. A baseline b=2 reduces variance by 71.02%; b=8 increases it. An action-dependent baseline instead has expected gradient 2.30e-17, revealing its bias. The detached baseline receives no gradient in automatic differentiation.
 
 A separate exact enumeration tests why the current batch is not used for its own mean-centering. With N=4 one-step samples, theory predicts factor 1-1/N=.75. Actual expectation changes from 0.45500 to 0.34125, measured ratio 0.75000. This isolates finite-batch self-dependence; the implemented prior-batch EMA avoids it.
 
 <!-- page break -->
 
-## 14. Objective, scores, and evidence limits
+## 14. Performance comparison and limitations
 
 CartPole: baseline minus basic final mean reward = 279.914; sample reward-SD change = -42.420. Architecture, environment, training budget, optimizer settings, final evaluation seeds and sampling are matched. These frozen-policy differences do not establish a general baseline benefit.
 
 Pong: baseline minus basic final mean reward = 0.728; sample reward-SD change = 0.341. Architecture, environment, training budget, optimizer settings, final evaluation seeds and sampling are matched. The separate paired gradient diagnostic measures 46.16% lower covariance trace, while raw reward SD is higher. Gradient variance and episode-score variability are different quantities. These frozen-policy differences do not establish a general baseline benefit.
 
-The basic CartPole curve repeatedly reaches the 500-step cap and collapses again. Its last-100 training mean is 453.460, yet the fixed final checkpoint evaluates at 143.678. A rolling training window combines trajectories from earlier sampling policies; the final Adam update follows the last logged trajectories and may alter behavior sharply. The better earlier windows were not substituted after seeing evaluation. The baseline final mean 423.592 is higher for this matched seed, but neither a stable final 500 score nor a universal method benefit is established.
+The basic CartPole curve repeatedly reaches the 500-step cap and collapses again. Its last-100 training mean is 453.460, while the final policy evaluates at 143.678. A rolling training window combines trajectories from earlier sampling policies; the final Adam update follows the last logged trajectories and may alter behavior sharply. The baseline final mean 423.592 is higher for this matched seed, although neither model achieves consistently maximal episode returns.
 
 The strict CartPole discounted objective saturates at 20: a 100-step trajectory has J=19.8816, while 500 steps is almost 20. Thus much of the raw-score difference between long survivals has weak discounted learning signal. This objective/score distinction and noisy episodic updates can coexist with training oscillations; the observations do not isolate a single causal explanation.
 
@@ -353,29 +349,31 @@ The strict CartPole discounted objective saturates at 20: a 100-step trajectory 
 | Pong basic | -20.500 | -20.510 | -1.4373 | -1.1791 |
 | Pong baseline | -20.530 | -19.980 | -1.4323 | -0.2470 |
 
-For Pong, a less negative discounted objective can reflect delaying an early loss. It need not imply a better whole-game outcome; raw scores can remain near -21. The table reports both quantities from the full formal curves. This is an objective/metric distinction, not evidence that a losing agent learned to win; only the frozen 500-game raw results quantify final game scores.
+For Pong, a less negative discounted objective can reflect delaying an early loss while whole-game scores remain near -21. Both policies lost every evaluation game: the basic policy scored between -21 and -17, and the baseline policy between -21 and -14. These results show that the current training configuration did not learn a winning policy.
 
-Actual Pong trace: frozen baseline diagnostic seed 92000000 ran a whole game of 859 decisions, raw reward -20, discounted J=-0.295926. The first nonzero reward was 1.0 at zero-based decision 93, contributing 0.392711 to J. Reset difference has 0 nonzero pixels; seeded first-ten-input replay identical=True. Full first-ten image counts/actions/rewards/RTG and compressed signed inputs are saved in data/validation/pong_trace.json and .npz.
+A Pong diagnostic trajectory using the baseline policy and seed 92000000 lasted 859 decisions, with total reward -20 and discounted J=-0.295926. Its first nonzero reward was 1.0 at zero-based decision 93, contributing 0.392711 to J. The reset frame difference had 0 nonzero pixels, and a seeded replay reproduced all ten initial image inputs.
 
 Purpose/theory: verify zero reset history, exact seeded preprocessing, and gamma^t attenuation of the first sparse reward. Method: collect the complete diagnostic game, then replay just ten decisions to compare inputs without adding an evaluation episode. Interpretation: zero early rewards can coexist with nonzero return-to-go from later points. A point remains a reward inside a full game, not a terminal boundary. This trace supports credit-timing semantics rather than convergence.
 
-Only one formal training seed per method/environment was affordable within this local experiment budget. Matched evaluation seeds improve comparability, but do not remove training-seed uncertainty. Exact toy tests verify the baseline identity and demonstrate possible variance changes, while the full games test actual behavior under the chosen sparse-reward objective. Neither evidence source substitutes for the other.
+Each method/environment was trained with one seed, which limits conclusions about robustness across training runs. Matched evaluation seeds improve comparability but do not remove training-seed uncertainty. Exact trajectory tests establish estimator properties, while the game experiments measure performance under the chosen discounted objective.
 
 <!-- page break -->
 
-## 15. Reproduction, limitations, and next experiments
+## 15. Reproducibility and future work
 
-The README contains the actual setup, training and resumption commands. requirements-lock.txt records installed package versions; data/environment.json records the actual platform and registered environment specifications. Configurations, raw CSVs, update metrics, frozen hashes and final policies are kept per run. Train/evaluation episode IDs, seeds, raw and discounted rewards, lengths, flags, steps, times and checkpoint mappings are preserved.
+Install the pinned dependencies in requirements-lock.txt, then run the commands below from the project root. The experiment configurations specify the four training budgets, random seeds, and 500-episode evaluation protocol. Per-run CSV files contain rewards, episode lengths, termination flags, step counts, and elapsed times.
 
 ```sh
-.venv/bin/python -m src.rl inspect
+uv venv --python 3.12 .venv
+uv pip install --python .venv/bin/python -r requirements-lock.txt
 .venv/bin/python src/shuttle.py all
+.venv/bin/python scripts/run_experiments.py
 .venv/bin/python -m src.validate_rl --output data/validation/rl.json
-.venv/bin/python -m src.plot_results
+.venv/bin/python -m src.plot_results --panels
 .venv/bin/python -m src.build_report
 ```
 
-Report rebuilding validates exactly 500 completed held-out episodes per model, disjoint training/evaluation seeds, and frozen-checkpoint SHA-256 correspondence. It reads saved observations only through recorded metrics; rebuilding figures or changing report layout never requires retraining. Training/evaluation can resume from complete committed batches after checking active processes and PROGRESS.md. The final archive excludes .venv, caches and redundant intermediate files.
+Figures and summary statistics are generated from the saved episode records. Checkpoints and configurations support evaluation and resumption at complete update boundaries; the README lists individual training and evaluation commands.
 
 ### Given three additional months
 
@@ -383,15 +381,15 @@ Run at least 10 matched training seeds per environment/method and report confide
 
 For shuttle dispatching, vary the hard cap and model overflow as a cost or a deferred queue; compare thresholds, long-run service delays, and out-of-sample arrival laws. Validate against independently implemented tiny exact MDPs and deterministic controls. For policy gradients, verify resumed/uninterrupted equivalence, CPU/MPS gradient agreement on saved batches, and explicit terminal-versus-time-limit cases. Test reward timing and gamma sensitivity without changing the required formal environment.
 
-For Pong, inspect first-score timing, sticky-action effects, frame-difference reset/boundary behavior and sparse-reward credit assignment. Compare compatible simple image-feature policies and small learning-rate/batch-size grids using tuning seeds. A strict episode-start discounted objective with gamma=.99 gives little weight to late Pong scores; study that sensitivity transparently rather than silently replacing it with another algorithm or a different objective.
+For Pong, inspect first-score timing, sticky-action effects, frame-difference reset behavior, and sparse-reward credit assignment. Compare image-policy architectures and learning-rate/batch-size grids using tuning seeds. Study sensitivity to the episode-start discounted objective and gamma=.99 in separately defined experimental variants.
 
-### Primary references and retained evidence
+### References
 
-Assignment source: mlds_assignment1.pdf in the project root (four pages).
+Assignment specification: mlds_assignment1.pdf.
 
 [Official ALE Pong environment](https://ale.farama.org/environments/pong/)
 
 [Official Gymnasium CartPole environment](https://gymnasium.farama.org/environments/classic_control/cart_pole/)
 
-Method details: docs/shuttle_method.md and docs/rl_validation.md. Chinese study guide: docs/LEARNING_ZH.md. Acceptance/evidence checklist: REQUIREMENTS.md. Hardware, GitHub verification limits and permitted actions: USER_CONTEXT.md. Continuous state and recovery: PROGRESS.md. Raw scientific results remain the source of truth when interpreting all eleven required plot contents.
+Implementation and validation details: docs/shuttle_method.md and docs/rl_validation.md.
 

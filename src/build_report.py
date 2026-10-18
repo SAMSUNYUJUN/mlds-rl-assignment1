@@ -259,20 +259,19 @@ def build_content(runs):
     r.story.append(Spacer(1, .18 * inch))
     r.story.append(Paragraph('Reinforcement Learning<br/>Assignment 1', r.styles['title']))
     r.md += ['# Reinforcement Learning Assignment 1', '']
-    r.paragraph('Yujun Sun | Local Apple M4 Pro experiments | October 2026')
-    r.paragraph('This report solves the shuttle dispatch MDP by three exact finite-state methods and implements Monte Carlo REINFORCE for CartPole-v1 and Pong-v5, with and without a prior-batch scalar baseline. All reported rewards, timings, validation values, and plots come from saved local runs.')
-    r.heading('Submission identity and evidence', 2)
-    r.paragraph(f'GitHub username: {owner}. Repository: {repo}. Read-only GitHub API checks verified the authenticated account and the existing public repository, which was initially empty. Repository delivery status and authorization are recorded in ACCEPTANCE.md.')
+    r.paragraph('Yujun Sun | October 2026')
+    r.paragraph('This report studies shuttle dispatching using finite-horizon enumeration, value iteration, and policy iteration. It also compares Monte Carlo REINFORCE with and without a scalar baseline on CartPole-v1 and Pong-v5, examining learning performance, gradient variance, and algorithm correctness.')
+    r.heading('Code and data', 2)
+    r.paragraph(f'GitHub username: {owner}. Repository: {repo}.')
     r.link('GitHub repository: ' + url, url)
-    r.paragraph('The PDF assignment was the only teaching material supplied. Its four pages were read in full. It specifies a due date of October 26, 2026 at 11:59 pm without a timezone. No course number or additional AI-use rule has been inferred.')
-    r.heading('Frozen final-checkpoint evaluation', 2)
+    r.heading('Evaluation summary', 2)
     result_rows = []
     for key, x in runs.items():
         s = x['summary']
         result_rows.append([NAMES[key], len(x['train']), s['n'], number(s['mean']), number(s['std_sample'])])
     r.table(['Model', 'Train episodes', 'Eval episodes', 'Mean reward', 'Sample SD'], result_rows,
             [145, 75, 75, 100, 100])
-    r.paragraph(f'Total: 2,000 complete held-out evaluation episodes, {total_evaluation_steps:,} evaluation environment steps, and {total_training_steps:,} formal training steps. Each model was frozen before its final evaluation. The policy samples its action distribution throughout evaluation; no argmax or checkpoint reselection uses these 500 rewards.')
+    r.paragraph(f'The experiments comprise {total_training_steps:,} training steps and 2,000 held-out evaluation episodes totaling {total_evaluation_steps:,} steps. Evaluation samples actions from each fixed final policy. Checkpoints are selected at the predetermined training endpoint, independently of evaluation rewards.')
     r.paragraph('Reward means and sample standard deviations describe raw undiscounted complete-episode totals. They are distinct from the discounted optimization objective and from the variance of a gradient estimator. All four models are single-training-seed experiments; comparisons describe these runs rather than population-level causal effects.')
     r.page()
 
@@ -280,8 +279,8 @@ def build_content(runs):
     r.heading('1. Shuttle model and finite enumeration')
     r.paragraph('State s is the observed queue size in {0,...,200} at a decision epoch. Action a in {0,1} means wait or dispatch one shuttle. Define q(s,a)=max(s-15a,0). The timing is: observe s, choose a, serve up to 15 passengers, charge dispatch plus holding for passengers still waiting, then add an independent uniform arrival A in {1,...,5}. New arrivals are first eligible for service at the next epoch.')
     r.formula('c(s,a) = 100 a + 2 max(s - 15 a, 0)\ns_next = min(200, max(s - 15 a, 0) + A)\nP(s_next=j | s,a) = (1/5) sum_{A=1}^5 1[j=s_next(s,a,A)]\nV_pi(s) = E_pi[sum_{t=0}^infinity 0.95^t c(s_t,a_t) | s_0=s]')
-    r.paragraph('All shuttle values are nonnegative discounted costs to minimize, not negative rewards. Empty or underfilled dispatch is allowed, costs 100, and takes min(s,15) passengers. At most one shuttle leaves per epoch. The artificial queue cap discards arrivals above 200 without an overflow penalty; equal clipped successor states accumulate probability. These are explicit modeling assumptions, not additional PDF quotations.')
-    r.paragraph('No further classroom definition of Enumeration was supplied. I therefore enumerate the two actions and five arrival branches in finite-horizon backward recursion, with T=500 and terminal V_T(s)=0. This evaluates the decision tree through shared subproblems instead of enumerating exponentially many complete 500-step trajectories.')
+    r.paragraph('Value functions represent expected discounted costs, which are minimized. Empty or underfilled dispatch is allowed, costs 100, and serves min(s,15) passengers. At most one shuttle leaves per epoch. Arrivals above the queue cap of 200 are discarded without an overflow penalty; equal clipped successor states accumulate probability. Underfilled service and overflow handling are modeling assumptions.')
+    r.paragraph('Finite-horizon enumeration considers both actions and all five arrival outcomes through backward recursion, with T=500 and terminal value V_T(s)=0. Reusing state values at each time step avoids exponential enumeration of complete trajectories.')
     r.formula('V_t(s) = min_a { c(s,a) + 0.95 sum_j P(j|s,a) V_{t+1}(j) }\nV_500(s)=0; t=499,...,0')
     r.figure('shuttle_enumeration.png', 'Figure 1. Finite-horizon enumeration: V_0(s) for T=500, terminal continuation cost zero.', 2.7 * inch)
     r.paragraph(f'At s=0 the computed cost is {number(shuttle["values_at_states"]["0"]["finite"],6)}; at s=200 it is {number(shuttle["values_at_states"]["200"]["finite"],6)}. More initial waiting increases cost through holding and the number of successive dispatches required.', 'small')
@@ -327,26 +326,26 @@ def build_content(runs):
     r.heading('4. REINFORCE objective and implementation')
     r.paragraph('For an episode of length L, the training objective discounts rewards from the episode start. G_t is return-to-go with time measured relative to t. Evaluation instead uses R=sum_t r_t without discount. CartPole gamma=0.95; Pong gamma=0.99.')
     r.formula('J(theta) = E_pi[sum_{t=0}^{L-1} gamma^t r_t]\nG_t = sum_{u=t}^{L-1} gamma^(u-t) r_u\nloss = -(1/(100 B)) sum_{episode i=1}^B sum_{t=0}^{L_i-1}\n       gamma^t log pi_theta(a_it | x_it) detach(G_it - b)')
-    r.paragraph('The absolute-time gamma^t factor matches the declared episode-start objective; it is separate from the discount inside G_t. Time steps are summed and complete episodes are averaged, with the same fixed positive scale 100 in every model. The basic estimator sets b=0 and never subtracts an episode/batch mean or applies z-score normalization. Adam minimizes the loss; clipping bounds the aggregate gradient norm at 10. These optimizer choices are recorded rather than claimed to preserve an unclipped update exactly.')
+    r.paragraph('The absolute-time gamma^t factor corresponds to the episode-start objective and is separate from the discount inside G_t. Time steps are summed and complete episodes are averaged, with the same fixed scale 100 in every model. The basic estimator uses b=0 and uncentered returns. Adam minimizes the loss, with an aggregate gradient-norm limit of 10.')
     r.table(['Environment', 'Policy input and network', 'Episode completion'], [
         ['CartPole-v1', 'Raw 4-vector -> Linear(4,64) -> Tanh -> Linear(64,2); sampled left/right.', 'Natural failure or official 500-step TimeLimit.'],
-        ['ALE/Pong-v5', 'Game RGB image -> PDF crop/downsample/background mask -> 80x80 frame difference -> Linear(6400,64) -> ReLU -> Linear(64,2). Outputs map to environment actions [2,3].', 'Natural game end or official ALE 108,000-frame cap; no point/rally boundaries.'],
+        ['ALE/Pong-v5', 'RGB image -> crop/downsample/background mask -> 80x80 frame difference -> Linear(6400,64) -> ReLU -> Linear(64,2). Outputs map to environment actions [2,3].', 'Natural game end or official ALE 108,000-frame cap; no point/rally boundaries.'],
     ], [95,275,125])
-    r.paragraph('Network initialization uses PyTorch default nn.Linear parameter initialization after manual_seed: matched methods use seed 101 for CartPole and 202 for Pong, without pretrained weights. Adam uses betas=(0.9,0.999), eps=1e-8 and weight_decay=0 under the pinned PyTorch 2.14.1 runtime. Reset/image-history initialization is separate from weight initialization.', 'small')
-    r.paragraph(f'The installed official registry resolves the requested Pong-v5 as ALE/Pong-v5 (Gymnasium {env["gymnasium"]}, ale-py {env["ale_py"]}). The six actual action meanings are {", ".join(env["pong_action_meanings"])}. The implementation selects only RIGHT and LEFT, indices 2 and 3. Inputs are images, not RAM.')
+    r.paragraph('Networks use PyTorch default nn.Linear random initialization, with matched seeds 101 for CartPole and 202 for Pong. Adam uses betas=(0.9,0.999), eps=1e-8 and weight_decay=0.', 'small')
+    r.paragraph(f'The Pong environment is ALE/Pong-v5 in Gymnasium {env["gymnasium"]} with ale-py {env["ale_py"]}. Its six action meanings are {", ".join(env["pong_action_meanings"])}. The policy selects RIGHT or LEFT, mapped to indices 2 and 3, using RGB game observations.')
     r.paragraph('Pong uses frameskip=4, sticky action probability=0.25, mode=0, difficulty=0, and the minimal six-action space. Crop rows 35:195, downsample both dimensions by 2, use the red channel, erase colors 144/109 and map other nonzero pixels to 1. Input is current minus previous binary frame, with a zero difference at reset. No frame stack, FIRE/NOOP wrapper, point-based termination, reward clipping, or custom episode shortening is used.')
     r.paragraph('Rollouts run without autograd; the policy parameters remain fixed for the entire update batch. Observations/actions are stored on CPU (Pong observations as int8), then log probabilities are recomputed in bounded chunks of 512. Gradients accumulate over all chunks; exactly one optimizer step occurs after the entire batch. Thus recomputation uses the sampling policy and does not retain long episode graphs. Evaluation uses inference mode with no gradient recording.')
     r.page()
 
     # Page 6
-    r.heading('5. Local benchmark, budgets, and checkpoints')
-    r.paragraph(f'All runs were executed on the verified native arm64 Apple M4 Pro MacBook Pro with 24 GB unified memory, macOS 15.6.1, Python 3.12.14, and PyTorch {env["torch"]}. The environment inspection reports machine={env["machine"]}, MPS available={env["mps_available"]}. No remote or paid compute was used. Shuttle and CartPole use CPU.')
+    r.heading('5. Experimental setup and training budgets')
+    r.paragraph(f'Experiments ran on an Apple M4 Pro MacBook Pro with 24 GB unified memory, macOS 15.6.1, native arm64 Python 3.12.14, and PyTorch {env["torch"]}. Shuttle dispatching and CartPole use the CPU. Pong device selection compares CPU and MPS performance.')
     r.paragraph('Pong CPU/MPS timing uses the same 64-unit policy, image preprocessing, complete-episode environment configuration, seed sequence, batch size, loss, and Adam update. Throughput includes rollout, Python environment stepping, preprocessing, inference, return calculation, and updates. Device selection uses measured end-to-end environment steps per second rather than matrix throughput alone.')
     br = []
     for x in bench['summaries']:
         br.append([x['device'], seconds(x['seconds']), f'{x["environment_steps"]:,}', number(x['steps_per_second'],1), seconds(x['update_seconds_mean']), f'{x["process_peak_rss_bytes"] / 2**20:.1f} MiB'])
     r.table(['Device', 'Duration', 'Env steps', 'Steps/s', 'Mean update', 'Peak RSS'], br, [55,75,85,75,95,110])
-    r.paragraph(f'Selected Pong device: {bench["selected"]}. {bench["reason"]}. Each device trial runs in a separate process, so peak RSS is an independent process high-water mark. MPS allocation counters in data/benchmark/decision.json are additional device-memory snapshots, not independent physical-memory peaks.', 'small')
+    r.paragraph(f'Pong uses {bench["selected"].upper()}, which achieved the higher end-to-end throughput. Each device was measured in a separate process; peak memory is the process RSS high-water mark.', 'small')
     rr=[]
     for key,x in runs.items():
         cfg=x['cfg']; t=x['train'][-1]
@@ -358,7 +357,7 @@ def build_content(runs):
             cfg=read_json(folder/'config.json'); rows=read_csv(folder/'train.csv')
             if rows: pilot.append([folder.name,len(rows),cfg['lr'],number(np.mean([float(z['reward']) for z in rows[-100:]])),seconds(rows[-1]['elapsed_seconds'])])
     if pilot:
-        r.heading('Pilot attempts (excluded from formal results)',2)
+        r.heading('Learning-rate pilots',2)
         r.table(['Pilot', 'Episodes', 'Adam LR', 'Last up-to-100 mean', 'Time'],pilot,[160,65,65,115,90])
     high_path=ROOT/'runs/pilot_pong_lr0p01/pilot_diagnostic.json'
     low_path=ROOT/'runs/pilot_pong_lr0p001/pilot_diagnostic.json'
@@ -371,8 +370,8 @@ def build_content(runs):
         count=sum(float(z['gradient_norm']) > float(x['cfg']['grad_clip']) for z in updates)
         clipped_counts.append(f'{NAMES[key]} {count}/{len(updates)}')
     r.paragraph('Gradient clipping bound 10 was monitored: clipped updates / all updates = ' + '; '.join(clipped_counts) + '. A zero count means clipping did not alter the updates in that run.', 'small')
-    r.paragraph('Formal training stops at the recorded episode budgets; smoke tests and timed benchmark episodes are excluded. The frozen checkpoint is the final model at that budget, recorded in FROZEN.json with a SHA-256 checksum before held-out evaluation. Neither the 500 final evaluation rewards nor their histograms select a checkpoint. Hyperparameter choices, initial failures, and the budget decision are documented in docs/experiment_budget.md; each run preserves its effective configuration.')
-    r.paragraph('Checkpoints include policy, Adam, episode/step counts, baseline, time and update count. Independent episode seeds permit batch-boundary recovery. Training sampling_policy_update identifies the policy before its consuming optimizer update; checkpoint tags are logical sampling-update labels, not retained filenames. Evaluation rows map to the frozen file hash. Atomic saves/log trimming prevent duplicate uncommitted batches.', 'small')
+    r.paragraph('Each model trains for 4,096 complete episodes, comprising 512 updates of eight episodes. Pilot and benchmark episodes are excluded from this budget. The policy after the final update is evaluated on 500 complete episodes using seeds independent of training and tuning. This fixed stopping rule does not use evaluation rewards for checkpoint selection.')
+    r.paragraph('Batch-boundary checkpoints store the policy, Adam state, baseline, episode and step counts, and seed mappings for reproducible resumption.', 'small')
     r.page()
 
     # Pages 7-10: exactly eight required PG/baseline figure contents.
@@ -380,7 +379,7 @@ def build_content(runs):
     for key in ['cartpole_basic','pong_basic','cartpole_baseline','pong_baseline']:
         x=runs[key]; cfg=x['cfg']; s=x['summary']; tr=x['train']
         title=NAMES[key]
-        r.heading(f'{6 + list(["cartpole_basic","pong_basic","cartpole_baseline","pong_baseline"]).index(key)}. {title}: actual results')
+        r.heading(f'{6 + list(["cartpole_basic","pong_basic","cartpole_baseline","pong_baseline"]).index(key)}. {title}: results')
         train_rewards=np.array([float(z['reward']) for z in tr])
         first=float(train_rewards[:min(100,len(tr))].mean()); last=float(train_rewards[-min(100,len(tr)):].mean())
         discounted=np.array([float(z['discounted_return']) for z in tr])
@@ -393,11 +392,12 @@ def build_content(runs):
         both=int(s.get('both_terminated_and_truncated',sum(truth(z['terminated']) and truth(z['truncated']) for z in x['evaluation'])))
         term_only=int(s.get('terminated_only',int(s['terminated'])-both))
         trunc_only=int(s.get('truncated_only',int(s['truncated'])-both))
-        r.paragraph(f'Final mean={number(s["mean"])}; sample SD={number(s["std_sample"])} (ddof=1); range [{number(s["min"],0)}, {number(s["max"],0)}]; mean length={number(s["mean_length"],1)} steps. Exclusive end cases: natural only {term_only}, time-limit only {trunc_only}, both flags {both}; total 500. Flags may coincide on CartPole step 500.', 'small')
+        ending_note=' Flags may coincide on CartPole step 500.' if cfg['game']=='cartpole' else ''
+        r.paragraph(f'Final mean={number(s["mean"])}; sample SD={number(s["std_sample"])} (ddof=1); range [{number(s["min"],0)}, {number(s["max"],0)}]; mean length={number(s["mean_length"],1)} steps. Exclusive end cases: natural only {term_only}, time-limit only {trunc_only}, both flags {both}; total 500.'+ending_note, 'small')
         r.page()
 
     # Page 11
-    r.heading('10. Policy-gradient correctness evidence')
+    r.heading('10. Policy-gradient validation')
     r.code('.venv/bin/python -m src.validate_rl --output data/validation/rl.json')
     ret=rv['returns']; exact=rv['exact_gradient_and_baseline']; auto=rv['autograd']; trace=rv['cartpole_trace']
     r.heading('Hand trajectory and objective weighting',2)
@@ -405,7 +405,7 @@ def build_content(runs):
     r.heading('Exact trajectory enumeration and update direction',2)
     r.paragraph(f'Purpose: validate the stochastic estimator without Monte Carlo error. Theory: three independent Bernoulli actions with p=.35 and rewards [1+2a0,-.5+3a1,2-a2] have dJ/dtheta=p(1-p)(2+3 gamma-gamma^2)={number(exact["exact_gradient"],8)}. Method: enumerate all eight trajectories and exact probabilities. Actual mean estimator is {number(exact["enumerated_expected_gradient"],8)}. Omitting gamma^t instead gives {number(exact["missing_gamma_t_expected_gradient"],8)}, a bias of {number(exact["missing_gamma_t_bias"],8)}.')
     r.paragraph(f'The float64 PyTorch policy-loss derivative is {number(auto["loss_gradient"],8)}; the central finite-difference objective derivative is {number(auto["finite_difference_objective_gradient"],8)}. One small SGD step raises J from {number(auto["objective_before"],6)} to {number(auto["objective_after"],6)}. This verifies the loss sign, not Adam convergence in Pong.')
-    r.heading('Real CartPole first-ten-step trace',2)
+    r.heading('CartPole first-ten-step trace',2)
     r.paragraph('Purpose: connect the return equations to real state/action/reward transitions. A separate uniform policy uses CartPole reset seed 74219 and Python action seed 74220. It runs the entire episode before returns are calculated; displaying ten rows does not truncate training or evaluation.')
     trace_rows=trace.get('first_ten_steps',trace.get('trajectory',trace.get('full_trajectory',[])))[:10]
     if not trace_rows:
@@ -419,12 +419,12 @@ def build_content(runs):
     r.page()
 
     # Production path + empirical diagnostics: checks the actual trainer, not a mirrored toy only.
-    r.heading('11. Production trainer and local controls')
+    r.heading('11. Implementation validation')
     prod = rv['production_trainer']
-    r.paragraph('Purpose: verify that the actual imported trainer implements the validated estimator, memory-bounded update, baseline timing, preprocessing, and checkpoint recovery. This test calls src.rl.update rather than a parallel demonstration implementation.')
+    r.paragraph('The implementation tests exercise the policy-gradient estimator, chunked updates, baseline timing, preprocessing, and checkpoint recovery through the training function src.rl.update.')
     r.paragraph(prod['theoretical_expectation'])
     r.paragraph('Method: ' + prod['method'])
-    r.table(['Production check', 'Actual quantitative evidence', 'Interpretation'], [
+    r.table(['Validation check', 'Quantitative result', 'Interpretation'], [
         ['Return recurrence', number(prod['production_returns_max_absolute_error']) + ' max absolute error', 'The production function agrees with direct hand sums.'],
         ['Exact expected update, b=0', number(prod['enumerated_production_update'][0]['actual_theta_after_update'],10) + ' vs ' + number(prod['enumerated_production_update'][0]['expected_theta_after_update'],10), 'Loss sign, gamma weights, fixed scale and batch average agree.'],
         ['Exact expected update, b=2', number(prod['enumerated_production_update'][1]['actual_theta_after_update'],10) + ' vs ' + number(prod['enumerated_production_update'][1]['expected_theta_after_update'],10), 'A fixed baseline preserves the expected update.'],
@@ -433,13 +433,12 @@ def build_content(runs):
         ['Checkpoint roundtrip', 'Next rollouts identical=' + str(prod['resume_rollouts_identical']) + '; parameter max error=' + number(prod['resume_parameter_max_absolute_error']), 'Saved model, Adam and baseline reproduce an actual next CPU update.'],
         ['Image semantics', 'Test mask pixels=' + str(prod['preprocessing_test_pixels']) + '; signed difference range=' + str(prod['signed_image_difference_range']), 'Background removal and negative motion pixels survive preprocessing without mutating the raw image.'],
     ],[110,190,195])
-    r.paragraph('Actual CartPole rollout lengths in the checkpoint experiment were ' + ', '.join(str(x) for x in prod['actual_rollout_episode_lengths']) + '. The resumed baseline was exactly equal=' + str(prod['resume_baseline_exactly_equal']) + '. These are update-boundary CPU checks; they do not claim bitwise CPU/MPS equality or recovery inside an unfinished episode.')
+    r.paragraph('CartPole rollout lengths in the checkpoint experiment were ' + ', '.join(str(x) for x in prod['actual_rollout_episode_lengths']) + '. Resumed and uninterrupted runs produced identical trajectories, parameter updates, and baseline values. The comparison covers CPU execution at complete update boundaries.')
     diagnostic_path = ROOT / 'data/validation/gradient_diagnostic.json'
     if diagnostic_path.exists():
         diagnostic = read_json(diagnostic_path)
-        r.paragraph('Additional fixed-checkpoint random-policy and gradient diagnostics are saved in data/validation/gradient_diagnostic.json. Their measured results and interpretation appear below.', 'small')
         r.page()
-        r.heading('12. Fixed-checkpoint empirical diagnostics')
+        r.heading('12. Fixed-policy gradient variance')
         if diagnostic.get('status') != 'complete' or len(diagnostic.get('models', [])) != 2:
             raise ValueError('Empirical diagnostic JSON is partial; final report must wait for both games')
         r.paragraph('Purpose: measure the implemented saved scalar baseline on actual learned-policy trajectories, and compare task behavior with an uninformed policy. Theory: a scalar fixed before actions preserves the expected gradient but can increase or reduce estimator variance. No optimizer or parameter update occurs; these diagnostics are collected after checkpoints are frozen.')
@@ -470,17 +469,17 @@ def build_content(runs):
     r.page()
 
     # Baseline discussion follows production-path verification.
-    r.heading(f'{13 if diagnostic_path.exists() else 12}. Baseline mechanism and evidence')
+    r.heading(f'{13 if diagnostic_path.exists() else 12}. Baseline mechanism and variance')
     r.paragraph('The baseline is a scalar EMA carried from earlier complete batches. It is initialized at zero, frozen throughout rollout and the corresponding policy update, and changes only after that update. Its target is the gamma^t-weighted mean return-to-go in the completed batch. It is constant across current states/actions; no value network or critic loss is used.')
     r.formula('target_k = [sum_{i,t} gamma^t G_it] / [sum_{i,t} gamma^t]\nb_(k+1) = 0.9 b_k + 0.1 target_k\nadvantage_it = detach(G_it - b_k)')
     r.paragraph('Because b_k is fixed before any current-batch actions are sampled, its score-function contribution has expectation zero conditional on earlier training history. A simple return-mean target is not the exact variance-minimizing baseline, which would additionally depend on score magnitudes. Thus it can reduce or increase variance, and cannot guarantee a better final score.')
     r.heading('Exact mechanism checks',2)
     r.table(['Fixed b', 'Expected gradient', 'Gradient-estimator variance'],[[z['constant_baseline'],number(z['expected_gradient'],8),number(z['gradient_estimator_variance'],8)] for z in exact['constant_baselines']],[95,200,200])
     same=rv['same_batch_mean_bias']
-    r.paragraph(f'Purpose: check action independence and variance rather than tensor shapes. Theory: fixed b leaves the expected gradient unchanged. Method: exact eight-trajectory enumeration. Actual b=2 reduces variance by {100*exact["variance_reduction_fraction_at_b2"]:.2f}%; b=8 increases it. An intentionally action-dependent baseline instead has expected gradient {number(exact["action_dependent_baseline_expected_gradient"])}, revealing its bias. Autograd confirms detached baseline receives no gradient ({auto["baseline_gradient_is_none"]}).')
+    r.paragraph(f'Purpose: check action independence and gradient-estimator variance. Theory: fixed b leaves the expected gradient unchanged. Method: exact eight-trajectory enumeration. A baseline b=2 reduces variance by {100*exact["variance_reduction_fraction_at_b2"]:.2f}%; b=8 increases it. An action-dependent baseline instead has expected gradient {number(exact["action_dependent_baseline_expected_gradient"])}, revealing its bias. The detached baseline receives no gradient in automatic differentiation.')
     r.paragraph(f'A separate exact enumeration tests why the current batch is not used for its own mean-centering. With N=4 one-step samples, theory predicts factor 1-1/N=.75. Actual expectation changes from {number(same["unbiased_expected_gradient"],5)} to {number(same["current_batch_mean_expected_gradient"],5)}, measured ratio {number(same["actual_ratio"],5)}. This isolates finite-batch self-dependence; the implemented prior-batch EMA avoids it.')
     r.page()
-    r.heading(f'{14 if diagnostic_path.exists() else 13}. Objective, scores, and evidence limits')
+    r.heading(f'{14 if diagnostic_path.exists() else 13}. Performance comparison and limitations')
     for game in ['cartpole','pong']:
         a=runs[game+'_basic']['summary']; b=runs[game+'_baseline']['summary']
         extra=''
@@ -493,7 +492,7 @@ def build_content(runs):
         r.paragraph(f'{label}: baseline minus basic final mean reward = {number(b["mean"]-a["mean"])}; sample reward-SD change = {number(b["std_sample"]-a["std_sample"])}. Architecture, environment, training budget, optimizer settings, final evaluation seeds and sampling are matched.{extra} These frozen-policy differences do not establish a general baseline benefit.')
     cp_basic=runs['cartpole_basic']; cp_base=runs['cartpole_baseline']
     cp_train=np.array([float(z['reward']) for z in cp_basic['train']])
-    r.paragraph(f'The basic CartPole curve repeatedly reaches the 500-step cap and collapses again. Its last-100 training mean is {number(cp_train[-100:].mean())}, yet the fixed final checkpoint evaluates at {number(cp_basic["summary"]["mean"])}. A rolling training window combines trajectories from earlier sampling policies; the final Adam update follows the last logged trajectories and may alter behavior sharply. The better earlier windows were not substituted after seeing evaluation. The baseline final mean {number(cp_base["summary"]["mean"])} is higher for this matched seed, but neither a stable final 500 score nor a universal method benefit is established.')
+    r.paragraph(f'The basic CartPole curve repeatedly reaches the 500-step cap and collapses again. Its last-100 training mean is {number(cp_train[-100:].mean())}, while the final policy evaluates at {number(cp_basic["summary"]["mean"])}. A rolling training window combines trajectories from earlier sampling policies; the final Adam update follows the last logged trajectories and may alter behavior sharply. The baseline final mean {number(cp_base["summary"]["mean"])} is higher for this matched seed, although neither model achieves consistently maximal episode returns.')
     r.paragraph('The strict CartPole discounted objective saturates at 20: a 100-step trajectory has J=19.8816, while 500 steps is almost 20. Thus much of the raw-score difference between long survivals has weak discounted learning signal. This objective/score distinction and noisy episodic updates can coexist with training oscillations; the observations do not isolate a single causal explanation.', 'small')
     pong_rows=[]
     for key in ['pong_basic','pong_baseline']:
@@ -501,33 +500,35 @@ def build_content(runs):
         raw=np.array([float(z['reward']) for z in rows]);disc=np.array([float(z['discounted_return']) for z in rows])
         pong_rows.append([NAMES[key],number(raw[:100].mean()),number(raw[-100:].mean()),number(disc[:100].mean(),4),number(disc[-100:].mean(),4)])
     r.table(['Pong model','First100 raw R','Last100 raw R','First100 J','Last100 J'],pong_rows,[115,95,95,95,95])
-    r.paragraph('For Pong, a less negative discounted objective can reflect delaying an early loss. It need not imply a better whole-game outcome; raw scores can remain near -21. The table reports both quantities from the full formal curves. This is an objective/metric distinction, not evidence that a losing agent learned to win; only the frozen 500-game raw results quantify final game scores.', 'small')
+    r.paragraph('For Pong, a less negative discounted objective can reflect delaying an early loss while whole-game scores remain near -21. Both policies lost every evaluation game: the basic policy scored between -21 and -17, and the baseline policy between -21 and -14. These results show that the current training configuration did not learn a winning policy.', 'small')
     pong_trace_path=ROOT/'data/validation/pong_trace.json'
     if pong_trace_path.exists():
         pt=read_json(pong_trace_path);pr=pt['results']
-        r.paragraph(f'Actual Pong trace: frozen baseline diagnostic seed {pt["seed"]} ran a whole game of {pt["episode_length"]} decisions, raw reward {number(pt["raw_episode_reward"],0)}, discounted J={number(pr["episode_discounted_return"],6)}. The first nonzero reward was {pr["first_nonzero_reward"]} at zero-based decision {pr["first_nonzero_reward_step"]}, contributing {number(pr["first_nonzero_reward_discounted_contribution"],6)} to J. Reset difference has {pr["reset_input_nonzero_pixels"]} nonzero pixels; seeded first-ten-input replay identical={pr["seeded_trace_replay_inputs_identical"]}. Full first-ten image counts/actions/rewards/RTG and compressed signed inputs are saved in data/validation/pong_trace.json and .npz.', 'small')
+        r.paragraph(f'A Pong diagnostic trajectory using the baseline policy and seed {pt["seed"]} lasted {pt["episode_length"]} decisions, with total reward {number(pt["raw_episode_reward"],0)} and discounted J={number(pr["episode_discounted_return"],6)}. Its first nonzero reward was {pr["first_nonzero_reward"]} at zero-based decision {pr["first_nonzero_reward_step"]}, contributing {number(pr["first_nonzero_reward_discounted_contribution"],6)} to J. The reset frame difference had {pr["reset_input_nonzero_pixels"]} nonzero pixels, and a seeded replay reproduced all ten initial image inputs.', 'small')
         r.paragraph('Purpose/theory: verify zero reset history, exact seeded preprocessing, and gamma^t attenuation of the first sparse reward. Method: collect the complete diagnostic game, then replay just ten decisions to compare inputs without adding an evaluation episode. Interpretation: zero early rewards can coexist with nonzero return-to-go from later points. A point remains a reward inside a full game, not a terminal boundary. This trace supports credit-timing semantics rather than convergence.', 'small')
-    r.paragraph('Only one formal training seed per method/environment was affordable within this local experiment budget. Matched evaluation seeds improve comparability, but do not remove training-seed uncertainty. Exact toy tests verify the baseline identity and demonstrate possible variance changes, while the full games test actual behavior under the chosen sparse-reward objective. Neither evidence source substitutes for the other.')
+    r.paragraph('Each method/environment was trained with one seed, which limits conclusions about robustness across training runs. Matched evaluation seeds improve comparability but do not remove training-seed uncertainty. Exact trajectory tests establish estimator properties, while the game experiments measure performance under the chosen discounted objective.')
     r.page()
 
     # Page 13
-    r.heading(f'{15 if diagnostic_path.exists() else 14}. Reproduction, limitations, and next experiments')
-    r.paragraph('The README contains the actual setup, training and resumption commands. requirements-lock.txt records installed package versions; data/environment.json records the actual platform and registered environment specifications. Configurations, raw CSVs, update metrics, frozen hashes and final policies are kept per run. Train/evaluation episode IDs, seeds, raw and discounted rewards, lengths, flags, steps, times and checkpoint mappings are preserved.')
-    r.code(['.venv/bin/python -m src.rl inspect',
+    r.heading(f'{15 if diagnostic_path.exists() else 14}. Reproducibility and future work')
+    r.paragraph('Install the pinned dependencies in requirements-lock.txt, then run the commands below from the project root. The experiment configurations specify the four training budgets, random seeds, and 500-episode evaluation protocol. Per-run CSV files contain rewards, episode lengths, termination flags, step counts, and elapsed times.')
+    r.code(['uv venv --python 3.12 .venv',
+        'uv pip install --python .venv/bin/python -r requirements-lock.txt',
         '.venv/bin/python src/shuttle.py all',
+        '.venv/bin/python scripts/run_experiments.py',
         '.venv/bin/python -m src.validate_rl --output data/validation/rl.json',
-        '.venv/bin/python -m src.plot_results',
+        '.venv/bin/python -m src.plot_results --panels',
         '.venv/bin/python -m src.build_report'])
-    r.paragraph('Report rebuilding validates exactly 500 completed held-out episodes per model, disjoint training/evaluation seeds, and frozen-checkpoint SHA-256 correspondence. It reads saved observations only through recorded metrics; rebuilding figures or changing report layout never requires retraining. Training/evaluation can resume from complete committed batches after checking active processes and PROGRESS.md. The final archive excludes .venv, caches and redundant intermediate files.')
+    r.paragraph('Figures and summary statistics are generated from the saved episode records. Checkpoints and configurations support evaluation and resumption at complete update boundaries; the README lists individual training and evaluation commands.')
     r.heading('Given three additional months',2)
     r.paragraph('Run at least 10 matched training seeds per environment/method and report confidence intervals for mean reward differences and sample efficiency. Keep the present 500-episode held-out protocol and reserve separate seeds for tuning. At saved checkpoints, collect independent on-policy batches to estimate gradient covariance directly; compare the implemented EMA with a score-weighted scalar optimum and a learned state-value baseline while holding sample budgets constant.')
     r.paragraph('For shuttle dispatching, vary the hard cap and model overflow as a cost or a deferred queue; compare thresholds, long-run service delays, and out-of-sample arrival laws. Validate against independently implemented tiny exact MDPs and deterministic controls. For policy gradients, verify resumed/uninterrupted equivalence, CPU/MPS gradient agreement on saved batches, and explicit terminal-versus-time-limit cases. Test reward timing and gamma sensitivity without changing the required formal environment.')
-    r.paragraph('For Pong, inspect first-score timing, sticky-action effects, frame-difference reset/boundary behavior and sparse-reward credit assignment. Compare compatible simple image-feature policies and small learning-rate/batch-size grids using tuning seeds. A strict episode-start discounted objective with gamma=.99 gives little weight to late Pong scores; study that sensitivity transparently rather than silently replacing it with another algorithm or a different objective.')
-    r.heading('Primary references and retained evidence',2)
-    r.paragraph('Assignment source: mlds_assignment1.pdf in the project root (four pages).', 'small')
+    r.paragraph('For Pong, inspect first-score timing, sticky-action effects, frame-difference reset behavior, and sparse-reward credit assignment. Compare image-policy architectures and learning-rate/batch-size grids using tuning seeds. Study sensitivity to the episode-start discounted objective and gamma=.99 in separately defined experimental variants.')
+    r.heading('References',2)
+    r.paragraph('Assignment specification: mlds_assignment1.pdf.', 'small')
     r.link('Official ALE Pong environment', 'https://ale.farama.org/environments/pong/')
     r.link('Official Gymnasium CartPole environment', 'https://gymnasium.farama.org/environments/classic_control/cart_pole/')
-    r.paragraph('Method details: docs/shuttle_method.md and docs/rl_validation.md. Chinese study guide: docs/LEARNING_ZH.md. Acceptance/evidence checklist: REQUIREMENTS.md. Hardware, GitHub verification limits and permitted actions: USER_CONTEXT.md. Continuous state and recovery: PROGRESS.md. Raw scientific results remain the source of truth when interpreting all eleven required plot contents.', 'small')
+    r.paragraph('Implementation and validation details: docs/shuttle_method.md and docs/rl_validation.md.', 'small')
     return r
 
 
@@ -538,7 +539,7 @@ def footer(canvas, doc):
     canvas.line(47,42,width-47,42)
     canvas.setFont('Helvetica',8)
     canvas.setFillColor(GRAY)
-    canvas.drawString(47,29,'Yujun Sun | RL Assignment 1 | Saved local experiment evidence')
+    canvas.drawString(47,29,'Yujun Sun | Reinforcement Learning Assignment 1')
     canvas.drawRightString(width-47,29,str(doc.page))
     canvas.restoreState()
 
