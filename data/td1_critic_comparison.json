@@ -1,0 +1,223 @@
+{
+  "complete": true,
+  "actor_advantage": "GAE unchanged, normalized within rollout",
+  "configuration_differences": {
+    "critic_target": {
+      "gae": null,
+      "td1": "td1"
+    },
+    "value_target": {
+      "gae": "unnormalized GAE advantage + frozen old state value",
+      "td1": "one-step TD: reward + gamma * (1-terminated) * frozen old next-state value"
+    }
+  },
+  "evaluation_seed_base": 88000000,
+  "evaluation_episodes_per_arm": 500,
+  "evaluation_action_rule": "sample categorical policy",
+  "arms": {
+    "gae": {
+      "run": "cartpole_ppo",
+      "configuration": {
+        "algorithm": "PPO-Clip",
+        "game": "cartpole",
+        "environment": "CartPole-v1",
+        "seed": 101,
+        "total_steps": 1384029,
+        "device": "cpu",
+        "hidden": 64,
+        "gamma": 0.95,
+        "gae_lambda": 0.95,
+        "clip_ratio": 0.2,
+        "actor_lr": 0.0003,
+        "critic_lr": 0.001,
+        "adam_eps": 1e-08,
+        "epochs": 10,
+        "minibatch_size": 256,
+        "rollout_steps": 2048,
+        "num_envs": 8,
+        "grad_clip": 0.5,
+        "entropy_coef": 0.0,
+        "normalize_advantage": true,
+        "advantage_std_ddof": 0,
+        "train_seed_base": 10100000,
+        "eval_seed_base": 80000000,
+        "action_sampling": "categorical via independent per-episode NumPy RNG",
+        "time_limit_bootstrap": true,
+        "observation_normalization": false,
+        "reward_normalization": false,
+        "value_loss": "0.5 * mean squared error",
+        "value_target": "unnormalized GAE advantage + frozen old state value",
+        "objective": "uniform-transition PPO clipped surrogate; no absolute gamma^t",
+        "termination": "natural failure or official 500-step TimeLimit",
+        "actor_initialization": "same Policy constructor and torch seed as REINFORCE"
+      },
+      "checkpoint_sha256": "8bf35c1067e785e910faddb1d8ab1f92718de55aa4b39618ff1715fd67d641eb",
+      "training_steps": 1384029,
+      "complete_training_episodes": 3324,
+      "ongoing_episode_lengths": [
+        118,
+        163,
+        306,
+        378,
+        311,
+        482,
+        25,
+        21
+      ],
+      "ongoing_training_steps": 1804,
+      "rollout_updates": 676,
+      "actor_optimizer_steps": 54070,
+      "critic_optimizer_steps": 54070,
+      "training_elapsed_seconds": 48.42646341701038,
+      "train_first100_mean": 18.65,
+      "train_last100_mean": 500.0,
+      "first_full100_window_crossing_steps": {
+        "475": 191856,
+        "500": 228168
+      },
+      "evaluation_n": 500,
+      "evaluation_mean": 500.0,
+      "evaluation_std_sample": 0.0,
+      "evaluation_min": 500.0,
+      "evaluation_max": 500.0,
+      "evaluation_cap_hits": 500,
+      "evaluation_environment_steps": 250000,
+      "terminated_only": 0,
+      "truncated_only": 500,
+      "both_terminated_and_truncated": 0,
+      "initial_value_diagnostic": {
+        "n": 500,
+        "mean_prediction": 19.997884426116944,
+        "mean_mc_return": 19.999999999854488,
+        "bias": -0.0021155737375516993,
+        "rmse": 0.0025002852786565086,
+        "mae": 0.0021155737375516993,
+        "error_std_sample": 0.0013339163772331788
+      },
+      "training_mse_definition": "2 * logged value_loss: unweighted mean of pre-update minibatch MSE observations across reuse epochs; targets differ between arms",
+      "training_stability_after_first_full500_window": {
+        "first_full500_window_episode": 1012,
+        "subsequent_complete_episodes": 2311,
+        "subsequent_noncap_episodes": 0,
+        "all_subsequent_complete_episodes_score500": true,
+        "subsequent_minimum_trailing100_mean": 500.0,
+        "consecutive_cap_episodes_at_end": 2411
+      },
+      "training_target_mse_first_update": 34.87422466278076,
+      "training_target_mse_last_update": 3.7318803915046116e-07
+    },
+    "td1": {
+      "run": "cartpole_ppo_td1_critic",
+      "configuration": {
+        "algorithm": "PPO-Clip",
+        "game": "cartpole",
+        "environment": "CartPole-v1",
+        "seed": 101,
+        "total_steps": 1384029,
+        "device": "cpu",
+        "hidden": 64,
+        "gamma": 0.95,
+        "gae_lambda": 0.95,
+        "clip_ratio": 0.2,
+        "actor_lr": 0.0003,
+        "critic_lr": 0.001,
+        "adam_eps": 1e-08,
+        "epochs": 10,
+        "minibatch_size": 256,
+        "rollout_steps": 2048,
+        "num_envs": 8,
+        "grad_clip": 0.5,
+        "entropy_coef": 0.0,
+        "normalize_advantage": true,
+        "advantage_std_ddof": 0,
+        "train_seed_base": 10100000,
+        "eval_seed_base": 80000000,
+        "action_sampling": "categorical via independent per-episode NumPy RNG",
+        "time_limit_bootstrap": true,
+        "observation_normalization": false,
+        "reward_normalization": false,
+        "value_loss": "0.5 * mean squared error",
+        "value_target": "one-step TD: reward + gamma * (1-terminated) * frozen old next-state value",
+        "objective": "uniform-transition PPO clipped surrogate; no absolute gamma^t",
+        "termination": "natural failure or official 500-step TimeLimit",
+        "actor_initialization": "same Policy constructor and torch seed as REINFORCE",
+        "critic_target": "td1"
+      },
+      "checkpoint_sha256": "6f00a5f3d4ff855e6651c381e9ca1ab0ca98d11966095ea498081005e8e8580d",
+      "training_steps": 1384029,
+      "complete_training_episodes": 3554,
+      "ongoing_episode_lengths": [
+        398,
+        151,
+        61,
+        469,
+        313,
+        322,
+        332,
+        102
+      ],
+      "ongoing_training_steps": 2148,
+      "rollout_updates": 676,
+      "actor_optimizer_steps": 54070,
+      "critic_optimizer_steps": 54070,
+      "training_elapsed_seconds": 47.59993412508629,
+      "train_first100_mean": 18.65,
+      "train_last100_mean": 500.0,
+      "first_full100_window_crossing_steps": {
+        "475": 297448,
+        "500": 331544
+      },
+      "evaluation_n": 500,
+      "evaluation_mean": 500.0,
+      "evaluation_std_sample": 0.0,
+      "evaluation_min": 500.0,
+      "evaluation_max": 500.0,
+      "evaluation_cap_hits": 500,
+      "evaluation_environment_steps": 250000,
+      "terminated_only": 0,
+      "truncated_only": 500,
+      "both_terminated_and_truncated": 0,
+      "initial_value_diagnostic": {
+        "n": 500,
+        "mean_prediction": 19.995392776489258,
+        "mean_mc_return": 19.999999999854488,
+        "bias": -0.004607223365237246,
+        "rmse": 0.006352277121332071,
+        "mae": 0.004607223365237246,
+        "error_std_sample": 0.0043775842626915555
+      },
+      "training_mse_definition": "2 * logged value_loss: unweighted mean of pre-update minibatch MSE observations across reuse epochs; targets differ between arms",
+      "training_stability_after_first_full500_window": {
+        "first_full500_window_episode": 1449,
+        "subsequent_complete_episodes": 2104,
+        "subsequent_noncap_episodes": 0,
+        "all_subsequent_complete_episodes_score500": true,
+        "subsequent_minimum_trailing100_mean": 500.0,
+        "consecutive_cap_episodes_at_end": 2204
+      },
+      "training_target_mse_first_update": 0.22786580841639079,
+      "training_target_mse_last_update": 4.670568768818027e-06
+    }
+  },
+  "initial_states_exactly_paired": true,
+  "mc_prediction_scope": "one observed return under each own frozen policy; not known true values",
+  "limitations": [
+    "One training seed",
+    "Different training targets make own-label MSE incomparable as truth accuracy",
+    "Full reward cap may hide differences beyond 500 steps"
+  ],
+  "source_paths": {
+    "gae": {
+      "run": "runs/cartpole_ppo",
+      "fresh_evaluation": "runs/td1_critic_eval/gae",
+      "initial_values": "runs/td1_critic_eval/gae/initial_value_diagnostic.csv"
+    },
+    "td1": {
+      "run": "runs/cartpole_ppo_td1_critic",
+      "fresh_evaluation": "runs/td1_critic_eval/td1",
+      "initial_values": "runs/td1_critic_eval/td1/initial_value_diagnostic.csv"
+    }
+  },
+  "training_window_diagnostic_scope": "One-seed descriptive complete-episode training windows; not frozen-intermediate-policy evaluations or population sample-efficiency estimates.",
+  "early_training_zoom_steps": 400000
+}

@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "original_artifact_hashes_unchanged": 30,
+  "only_configuration_differences": {
+    "value_target": [
+      "unnormalized GAE advantage + frozen old state value",
+      "one-step TD: reward + gamma * (1-terminated) * frozen old next-state value"
+    ],
+    "critic_target": [
+      null,
+      "td1"
+    ]
+  },
+  "matched_initial_states": true,
+  "runs": {
+    "gae": {
+      "training_complete_episodes": 3324,
+      "training_completed_steps": 1382225,
+      "training_ongoing_steps": 1804,
+      "rollouts": 676,
+      "actor_steps": 54070,
+      "critic_steps": 54070,
+      "eval_episodes": 500,
+      "eval_mean": 500.0,
+      "eval_sample_sd": 0.0,
+      "initial_critic_rmse": 0.002500285278656508,
+      "initial_critic_bias": -0.0021155737375516993,
+      "checkpoint_sha256": "8bf35c1067e785e910faddb1d8ab1f92718de55aa4b39618ff1715fd67d641eb"
+    },
+    "td1": {
+      "training_complete_episodes": 3554,
+      "training_completed_steps": 1381881,
+      "training_ongoing_steps": 2148,
+      "rollouts": 676,
+      "actor_steps": 54070,
+      "critic_steps": 54070,
+      "eval_episodes": 500,
+      "eval_mean": 500.0,
+      "eval_sample_sd": 0.0,
+      "initial_critic_rmse": 0.00635227712133207,
+      "initial_critic_bias": -0.004607223365237246,
+      "checkpoint_sha256": "6f00a5f3d4ff855e6651c381e9ca1ab0ca98d11966095ea498081005e8e8580d"
+    }
+  },
+  "notes": "Initial critic discrepancies use each frozen policy sampled return, not unknown true conditional V. Both final reward distributions are at official cap. Training curves are single-seed observations."
+}

@@ -1,0 +1,127 @@
+{
+  "status": "passed",
+  "command": ".venv/bin/python -m src.validate_td1_critic",
+  "targets": {
+    "purpose": "Verify one-step critic targets and distinct physical-terminal, TimeLimit and slice handling.",
+    "theoretical_expectation": "Target is r+.95*(1-terminated)*V_old(next). Truncation alone and an ongoing slice retain bootstrap; true terminal wins when both flags are set.",
+    "method": "Independent hand targets plus actual CartPole collector transitions at forced physical/500-step boundaries, with constant old critic value2.",
+    "hand_expected_targets": [
+      1.76,
+      2.0,
+      4.9,
+      4.0
+    ],
+    "hand_actual_targets": [
+      1.76,
+      2.0,
+      4.9,
+      4.0
+    ],
+    "hand_max_absolute_error": 0.0,
+    "targets_do_not_alias_next_values": true,
+    "actual_collector_cases": [
+      {
+        "case": "natural_terminal",
+        "expected_target": 1.0,
+        "actual_target": 1.0,
+        "terminated": true,
+        "truncated": false,
+        "complete_episode_records": 1
+      },
+      {
+        "case": "time_limit_only",
+        "expected_target": 2.9,
+        "actual_target": 2.9000000953674316,
+        "terminated": false,
+        "truncated": true,
+        "complete_episode_records": 1
+      },
+      {
+        "case": "terminal_and_time_limit",
+        "expected_target": 1.0,
+        "actual_target": 1.0,
+        "terminated": true,
+        "truncated": true,
+        "complete_episode_records": 1
+      },
+      {
+        "case": "ongoing_rollout_slice",
+        "expected_target": 2.9,
+        "actual_target": 2.9000000953674316,
+        "terminated": false,
+        "truncated": false,
+        "complete_episode_records": 0
+      }
+    ],
+    "explanation": "A truncated boundary is not treated as a natural physical failure under this configured continuing-value bootstrap convention. One-step labels are numerical frozen data, while actor GAE is unchanged."
+  },
+  "matched_first_update": {
+    "purpose": "Verify that the first paired comparison differs solely in critic regression labels.",
+    "theoretical_expectation": "Matched networks/policy/seed yield identical first observations/actions/GAE. Separate actor and critic networks imply identical actor updates on that first batch, while differing labels alter critic updates.",
+    "method": "Two actual64-step CPU rollouts with same seed764; independently recompute one-step labels from recorded next observations and frozen critic; optimize twice with identical minibatch RNG.",
+    "config_differences": [
+      "critic_target",
+      "value_target"
+    ],
+    "actor_gae_lambda": 0.95,
+    "initial_actor_parameter_max_absolute_error": 0.0,
+    "initial_critic_parameter_max_absolute_error": 0.0,
+    "first_rollout_tensors_exactly_equal": [
+      "obs",
+      "action",
+      "old_logp",
+      "value",
+      "raw_advantage",
+      "advantage"
+    ],
+    "complete_episode_records_exactly_equal": true,
+    "td_target_independent_reference_max_absolute_error": 1.1920928955078125e-07,
+    "gae_vs_td_target_max_absolute_difference": 8.039252281188965,
+    "first_batch_actor_parameter_max_absolute_error": 0.0,
+    "first_batch_critic_parameter_max_absolute_difference": 0.0003719404339790344,
+    "labels_frozen_through_all_epochs": true,
+    "actor_gradient_steps": 8,
+    "gae_label_first_batch_mean_optimization_value_loss": 14.796825408935547,
+    "td_label_first_batch_mean_optimization_value_loss": 0.47789426892995834,
+    "explanation": "The two recorded value losses use different labels and cannot establish which critic is more accurate. Later actor updates can diverge because each newly learned critic changes subsequent GAE estimates; only the controlled first batch must have identical actor updates."
+  },
+  "checkpoint_resume": {
+    "purpose": "Verify actual one-step-critic train() configuration and numerical state survive interruption/resume.",
+    "theoretical_expectation": "Same143-step budget and seed with a pause after64 steps produce exact actor/critic/Adam/collector/RNG state and episode logs.",
+    "method": "Tiny full versus stopped/resumed production train() executions in automatically deleted temporary directories; exclude elapsed times from comparisons.",
+    "critic_target_mode": "td1",
+    "actor_gae_lambda": 0.95,
+    "compared_state_keys": [
+      "config",
+      "model",
+      "critic",
+      "optimizer",
+      "critic_optimizer",
+      "collector",
+      "shuffle_rng_state",
+      "torch_rng_state",
+      "updates",
+      "steps",
+      "episode",
+      "gradient_steps"
+    ],
+    "all_state_fields_exactly_equal": true,
+    "actor_parameter_max_absolute_error": 0.0,
+    "critic_parameter_max_absolute_error": 0.0,
+    "episode_logs_equal_excluding_elapsed": true,
+    "episode_ids": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "rollout_steps": [
+      64,
+      64,
+      15
+    ],
+    "final_environment_steps": 143,
+    "explanation": "This verifies the one-step flag persists through the real checkpoint lifecycle. It is a small correctness experiment, not a formal training-performance result."
+  },
+  "elapsed_seconds": 0.8867897919844836
+}

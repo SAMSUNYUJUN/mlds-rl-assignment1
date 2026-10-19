@@ -41,8 +41,8 @@ class Critic(nn.Module):
         return self.net(x).squeeze(-1)
 
 
-def default_config(seed=101, total_steps=1384029):
-    return dict(algorithm='PPO-Clip', game='cartpole', environment='CartPole-v1',
+def default_config(seed=101, total_steps=1384029, critic_target='gae'):
+    cfg = dict(algorithm='PPO-Clip', game='cartpole', environment='CartPole-v1',
                 seed=seed, total_steps=total_steps, device='cpu', hidden=64,
                 gamma=.95, gae_lambda=.95, clip_ratio=.2, actor_lr=.0003,
                 critic_lr=.001, adam_eps=1e-8, epochs=10, minibatch_size=256,
@@ -56,6 +56,12 @@ def default_config(seed=101, total_steps=1384029):
                 objective='uniform-transition PPO clipped surrogate; no absolute gamma^t',
                 termination='natural failure or official 500-step TimeLimit',
                 actor_initialization='same Policy constructor and torch seed as REINFORCE')
+    if critic_target == 'td1':
+        cfg['critic_target'] = 'td1'
+        cfg['value_target'] = 'one-step TD: reward + gamma * (1-terminated) * frozen old next-state value'
+    elif critic_target != 'gae':
+        raise ValueError(f'Unknown critic target {critic_target!r}')
+    return cfg
 
 
 def make_models(cfg):
@@ -78,6 +84,12 @@ def gae(rewards, values, next_values, terminated, truncated, gamma=.95, lam=.95)
         carry = delta[t] + gamma * lam * (not (term[t] or trunc[t])) * carry
         advantages[t] = carry
     return advantages, advantages + v
+
+
+def td1_targets(rewards, next_values, terminated, gamma=.95):
+    """Frozen one-step regression labels; TimeLimits and rollout ends bootstrap."""
+    rewards, next_values = (np.asarray(x, np.float64) for x in (rewards, next_values))
+    return rewards + gamma * next_values * (~np.asarray(terminated, bool))
 
 
 def clipped_policy_loss(new_logp, old_logp, advantage, clip_ratio=.2):
@@ -161,6 +173,10 @@ class Collector:
             a, target = gae([t['reward'] for t in lane], [t['value'] for t in lane],
                             [t['next_value'] for t in lane], [t['terminated'] for t in lane],
                             [t['truncated'] for t in lane], self.cfg['gamma'], self.cfg['gae_lambda'])
+            if self.cfg.get('critic_target', 'gae') == 'td1':
+                # Actor advantages still use the SAME GAE. Only critic labels change.
+                target = td1_targets([t['reward'] for t in lane], [t['next_value'] for t in lane],
+                                     [t['terminated'] for t in lane], self.cfg['gamma'])
             for row, advantage, value_target in zip(lane, a, target):
                 rows.append(dict(**row, advantage=advantage, value_target=value_target))
         data = {key: torch.as_tensor(np.asarray([row[key] for row in rows]),
@@ -406,6 +422,7 @@ def main():
     parser.add_argument('--output')
     parser.add_argument('--steps', type=int, default=1384029)
     parser.add_argument('--seed', type=int, default=101)
+    parser.add_argument('--critic-target', choices=['gae', 'td1'], default='gae')
     parser.add_argument('--episodes', type=int, default=500)
     parser.add_argument('--eval-seed-base', type=int, default=80000000)
     parser.add_argument('--stop-after-updates', type=int)
@@ -417,7 +434,7 @@ def main():
     with (lock_path/f'{args.mode}.lock').open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         if args.mode == 'train':
-            train(folder, default_config(args.seed, args.steps), args.stop_after_updates)
+            train(folder, default_config(args.seed, args.steps, args.critic_target), args.stop_after_updates)
         else:
             evaluate_frozen(folder, lock_path, args.episodes, args.eval_seed_base)
 

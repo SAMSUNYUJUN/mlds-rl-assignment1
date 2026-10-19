@@ -1,6 +1,6 @@
 # Progress and recovery
 
-Updated: 2026-10-18, America/Chicago.
+Updated: 2026-10-19, America/Chicago.
 
 ## Completed local scientific work
 
@@ -79,4 +79,29 @@ for run in cartpole_basic cartpole_baseline cartpole_ppo; do
   .venv/bin/python -m src.ppo evaluate --run runs/$run --output runs/ppo_comparison_eval/$run --episodes 500 --eval-seed-base 84000000
 done
 .venv/bin/python -m src.compare_ppo
+```
+
+## One-step TD critic ablation (2026-10-19, complete)
+
+- Branch `codex/cartpole-ppo-comparison`, starting at `5edb3fc`. Plan fixed in `data/td1_critic_plan.json`. Only the critic label changes to `reward + gamma * (1-terminated) * V_old(next)`; actor GAE (lambda 0.95), networks, initialization, optimizers and interaction budget are unchanged. The existing frozen GAE run is reused without modification.
+- Local CPU formal run `runs/cartpole_ppo_td1_critic` completed exactly 1,384,029 environment interactions with seed 101. Its 3,554 completed episodes account for 1,381,881 steps; eight ongoing episodes account for 2,148 steps. There are 676 rollout updates, 54,070 actor steps and 54,070 critic steps, matching the control. Logged elapsed time 47.600 s; peak RSS 312,377,344 bytes. The 8,192-step timing pilot is excluded from formal results.
+- Final-only frozen checkpoint `runs/cartpole_ppo_td1_critic/final.pt`, SHA-256 `6f00a5f3d4ff855e6651c381e9ca1ab0ca98d11966095ea498081005e8e8580d`. No checkpoint selection or tuning used final evaluation results.
+- Fresh paired evaluation is complete: 500 full sampled episodes per model, seeds 88000000–88000499, saved under `runs/td1_critic_eval/{gae,td1}`. Both means are 500 and sample SDs are 0; all 1,000 episodes reach the official cap. No shortened evaluation episodes.
+- Training-window result: the first full 100-episode mean of 500 occurs at 228,168 interactions for GAE targets and 331,544 for one-step TD targets. All subsequently completed training episodes also score 500 (2,311 and 2,104 respectively). These are descriptive single-seed training statistics, not intermediate frozen-policy evaluations or a general ranking.
+- Frozen initial-state critic diagnostics reuse recorded evaluation returns and matched seeded resets. RMSE against each policy's sampled discounted return is 0.0025003 (GAE) versus 0.0063523 (TD1), both close to value 20. This is not measurement of true conditional expected value. Own-target training MSEs have different labels and cannot rank value accuracy.
+- Quantitative validation passes: independent hand targets and physical/TimeLimit/slice masks; first rollout and actor GAE match exactly; first-batch actor parameter error 0 while critic parameters differ by 0.00037194; frozen labels; bitwise actual train-loop interruption/resume. Evidence `data/validation/td1_critic.json` and `data/validation/ppo_compat_td1.json`.
+- Raw-log integrity checks recompute counters/statistics and verify 30 preserved original artifact hashes: `data/td1_critic_integrity.json`, `data/td1_critic_original_artifacts.json`. Original assignment PDF remains unchanged.
+- Comparison document `docs/TD1_CRITIC_COMPARISON.md`, summary `data/td1_critic_comparison.json` and four `figures/td1_critic_*.png` plots are generated entirely from saved data.
+
+No training, evaluation or diagnostic process remains active. Logs: `logs/td1_critic_train.log`, `logs/td1_critic_eval_{gae,td1}.log`, `logs/td1_critic_value_diagnostic.log`. Historical PIDs in saved process records are not live-process evidence. No experiment needs restarting.
+
+Reproduce or safely resume (completed frozen runs are skipped):
+
+```sh
+.venv/bin/python -m src.validate_td1_critic
+caffeinate -i .venv/bin/python -u -m src.ppo train --run runs/cartpole_ppo_td1_critic --critic-target td1
+.venv/bin/python -m src.ppo evaluate --run runs/cartpole_ppo --output runs/td1_critic_eval/gae --episodes 500 --eval-seed-base 88000000
+.venv/bin/python -m src.ppo evaluate --run runs/cartpole_ppo_td1_critic --output runs/td1_critic_eval/td1 --episodes 500 --eval-seed-base 88000000
+.venv/bin/python -m src.diagnose_td1_critic
+.venv/bin/python -m src.compare_td1_critic
 ```

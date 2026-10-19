@@ -127,3 +127,41 @@ done
 # Regenerate comparison plots/statistics/discussion from saved data only
 .venv/bin/python -m src.compare_ppo
 ```
+
+## One-step TD critic target ablation
+
+This controlled PPO variant changes only the critic regression target from the
+GAE lambda-return to `r + gamma * (1-terminated) * V_old(next_state)`. The actor
+still uses normalized GAE with lambda 0.95. All networks, initialization, learning
+rates, rollout/minibatch sizes and the 1,384,029-step budget match the frozen
+GAE-target PPO run. See [training comparison](docs/TD1_CRITIC_COMPARISON.md).
+
+Observed results for training seed 101 (each model uses 1,384,029 interactions):
+
+| Critic target | First full 100-episode training mean of 500: interactions | Fresh 500-episode evaluation mean / sample SD |
+|---|---:|---:|
+| GAE lambda-return |228,168|500 / 0|
+| One-step TD |331,544|500 / 0|
+
+The GAE-target run reaches the perfect training window earlier in this seed;
+both final policies reach the official cap in every fresh evaluation episode.
+Training-window crossings are descriptive, not frozen-policy evaluations or a
+general performance ranking. The comparison includes full and enlarged training
+curves, own-target critic MSE, evaluation histograms and initial-state critic errors.
+
+```sh
+.venv/bin/python -m src.validate_td1_critic
+caffeinate -i .venv/bin/python -u -m src.ppo train \
+  --run runs/cartpole_ppo_td1_critic --critic-target td1
+.venv/bin/python -m src.ppo evaluate --run runs/cartpole_ppo \
+  --output runs/td1_critic_eval/gae --episodes 500 --eval-seed-base 88000000
+.venv/bin/python -m src.ppo evaluate --run runs/cartpole_ppo_td1_critic \
+  --output runs/td1_critic_eval/td1 --episodes 500 --eval-seed-base 88000000
+.venv/bin/python -m src.diagnose_td1_critic
+.venv/bin/python -m src.compare_td1_critic
+```
+
+The new complete-episode evaluation seeds are separate from the earlier results.
+Initial-state critic diagnostics reuse those recorded returns and seeded resets;
+they do not add training or evaluation episodes. Own-target training losses use
+different regression labels and cannot by themselves rank value accuracy.

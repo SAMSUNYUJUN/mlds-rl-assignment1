@@ -1,0 +1,9 @@
+{
+  "file": "final.pt",
+  "sha256": "e440c5243eba6a5e6f7a3c02f855877cf7d5147908de82c3499b68b7b4231ab1",
+  "episode": 341,
+  "steps": 8192,
+  "rule": "Final update at fixed environment-step budget; no held-out evaluation consulted.",
+  "frozen_at": 1792440878.578725,
+  "ongoing_training_episodes_are_not_completed_records": true
+}

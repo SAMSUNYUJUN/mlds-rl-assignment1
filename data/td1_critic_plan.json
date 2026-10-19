@@ -1,0 +1,101 @@
+{
+  "status": "fixed_before_formal_one_step_TD_training",
+  "date": "2026-10-19 America/Chicago",
+  "branch": "codex/cartpole-ppo-comparison",
+  "parent_commit": "5edb3fc259d4fc719aa4d2d17662678bfb59f5d6",
+  "host": "macOS-15.6.1-arm64-arm-64bit",
+  "machine": "arm64",
+  "scope": "Only critic regression labels change; actor advantage estimator remains normalized GAE(lambda=.95).",
+  "clarification": "Default announced and optional question offered; without a different user choice use critic-only ablation matching preceding discussion.",
+  "control_run": "runs/cartpole_ppo",
+  "new_run": "runs/cartpole_ppo_td1_critic",
+  "configuration": {
+    "algorithm": "PPO-Clip",
+    "game": "cartpole",
+    "environment": "CartPole-v1",
+    "seed": 101,
+    "total_steps": 1384029,
+    "device": "cpu",
+    "hidden": 64,
+    "gamma": 0.95,
+    "gae_lambda": 0.95,
+    "clip_ratio": 0.2,
+    "actor_lr": 0.0003,
+    "critic_lr": 0.001,
+    "adam_eps": 1e-08,
+    "epochs": 10,
+    "minibatch_size": 256,
+    "rollout_steps": 2048,
+    "num_envs": 8,
+    "grad_clip": 0.5,
+    "entropy_coef": 0.0,
+    "normalize_advantage": true,
+    "advantage_std_ddof": 0,
+    "train_seed_base": 10100000,
+    "eval_seed_base": 80000000,
+    "action_sampling": "categorical via independent per-episode NumPy RNG",
+    "time_limit_bootstrap": true,
+    "observation_normalization": false,
+    "reward_normalization": false,
+    "value_loss": "0.5 * mean squared error",
+    "value_target": "one-step TD: reward + gamma * (1-terminated) * frozen old next-state value",
+    "objective": "uniform-transition PPO clipped surrogate; no absolute gamma^t",
+    "termination": "natural failure or official 500-step TimeLimit",
+    "actor_initialization": "same Policy constructor and torch seed as REINFORCE",
+    "critic_target": "td1"
+  },
+  "only_configuration_changes": {
+    "value_target": {
+      "gae": "unnormalized GAE advantage + frozen old state value",
+      "one_step_td": "one-step TD: reward + gamma * (1-terminated) * frozen old next-state value"
+    },
+    "critic_target": {
+      "gae": null,
+      "one_step_td": "td1"
+    }
+  },
+  "formal_steps": 1384029,
+  "training_seed": 101,
+  "compute_device": "cpu",
+  "compute_cost": 0,
+  "pilot": {
+    "run": "runs/pilot_td1_critic_speed",
+    "seed": 91,
+    "steps": 8192,
+    "purpose": "Timing/execution only; excluded from formal results"
+  },
+  "stopping_rule": "Fixed environment-step budget. Freeze final update; no evaluation-based selection or hyperparameter tuning.",
+  "final_evaluation": {
+    "runs": {
+      "gae": "runs/cartpole_ppo",
+      "td1": "runs/cartpole_ppo_td1_critic"
+    },
+    "output": "runs/td1_critic_eval/{gae,td1}",
+    "episodes_each": 500,
+    "seed_base": 88000000,
+    "action_rule": "Categorical sampling, same per-episode NumPy RNG protocol",
+    "statistics": "Sample SD ddof=1; paired seed differences"
+  },
+  "value_diagnostic": "Frozen critics predict V(s0) on the same held-out reset seeds; compare each with its policy actual discounted complete-episode return. This includes sampled-return noise and is not direct measurement of true expected V. No repeated training or target tuning.",
+  "figures": [
+    "Full and early-window reward versus actual environment interactions",
+    "Own-target critic regression MSE (targets differ; not direct accuracy comparison)",
+    "Final 500-episode sampled reward histograms",
+    "Held-out initial-state predicted value minus sampled discounted return"
+  ],
+  "limitations": [
+    "One training seed, not a general algorithm ranking",
+    "Actor GAE is unchanged, but its later numerical advantages change as the separately trained critic changes",
+    "Own-target loss and explained variance use different regression labels and on-policy state distributions",
+    "Control run reused exactly as frozen; no overwrite or repeat of original training"
+  ],
+  "pilot_measured": {
+    "steps": 8192,
+    "updates": 4,
+    "episode": 341,
+    "elapsed": 0.3191230839584023,
+    "steps_per_second": 25670.34605703368,
+    "process_peak_rss_bytes": 300335104,
+    "formal_runtime_estimate_seconds": 53.91547885349897
+  }
+}

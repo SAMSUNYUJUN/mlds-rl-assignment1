@@ -1,0 +1,8 @@
+{
+  "source_run": "runs/cartpole_ppo",
+  "checkpoint_sha256": "8bf35c1067e785e910faddb1d8ab1f92718de55aa4b39618ff1715fd67d641eb",
+  "seed_base": 88000000,
+  "episodes": 500,
+  "action_rule": "sample categorical policy",
+  "complete_episodes_only": true
+}

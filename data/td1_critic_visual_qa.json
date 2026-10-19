@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-19",
+  "passed": true,
+  "figures": {
+    "figures/td1_critic_training.png": {
+      "sha256": "9c3b3807cbd67ec6df0edff36126fec761c5625c56ce9db2388dafcd14d05643",
+      "pixels": [
+        2340,
+        882
+      ],
+      "visually_inspected": true,
+      "checks": "Full and first 400,000 interactions; both target labels and 228,168/331,544 threshold markers readable; raw episodes and trailing-100 means distinguished."
+    },
+    "figures/td1_critic_training_mse.png": {
+      "sha256": "7869a4461ebd7c72e0034e69b3add5f1b9899de82101a267120cad23757279be",
+      "pixels": [
+        2106,
+        864
+      ],
+      "visually_inspected": true,
+      "checks": "Shared logarithmic scale; own-target fitting losses clearly identified as differing labels; no value-accuracy ranking from MSE."
+    },
+    "figures/td1_critic_evaluation.png": {
+      "sha256": "8f1aacbcdb7486336b5d323812fa325c92a1f59fc516ef72b9dab10ca9df8fac",
+      "pixels": [
+        2034,
+        828
+      ],
+      "visually_inspected": true,
+      "checks": "Both 500-complete-episode histograms, identical axes/bins, observed mean 500 and sample SD 0."
+    },
+    "figures/td1_critic_initial_value.png": {
+      "sha256": "e697a500829ae4efb05d1852fdff521b55aeb77df65acdb6f1d94dcdbf6fa01c",
+      "pixels": [
+        1926,
+        810
+      ],
+      "visually_inspected": true,
+      "checks": "Bias and RMSE labels match saved data; 500 matched initial states; no claim to known conditional true values."
+    }
+  },
+  "document": {
+    "path": "docs/TD1_CRITIC_COMPARISON.md",
+    "sha256": "ea83f1ff10b34cf28418f3cb30ab0b8c37bdb30770d07650665cf1780b2d0900",
+    "formula_and_numeric_audit": "passed; independently recomputed counters, thresholds and fresh evaluation statistics"
+  },
+  "preserved_original_artifacts": 30,
+  "original_assignment_pdf_sha256": "a05f49e547e6e4d280b3b9d2679f1393b25aec979b894880b77c05b64f741474",
+  "notes": [
+    "Only critic target changes; actor retains GAE(lambda=.95).",
+    "Single training seed; both final policies attain the official evaluation cap.",
+    "No active training/evaluation process found in process inspection."
+  ]
+}
