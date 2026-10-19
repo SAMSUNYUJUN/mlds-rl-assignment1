@@ -1,0 +1,451 @@
+{
+  "status": "passed",
+  "command": ".venv/bin/python -m src.validate_ppo",
+  "initialization": {
+    "purpose": "Validate matched starting actor weights for the algorithm comparison.",
+    "theoretical_expectation": "Constructing the actor before the critic with torch seed101 and the same 4->64 Tanh->2 architecture reproduces the original REINFORCE actor initialization exactly.",
+    "method": "Compare every production PPO actor parameter against Policy('cartpole',64) constructed immediately after torch.manual_seed(101).",
+    "actor_parameter_max_absolute_error": 0.0,
+    "parameter_count": 450,
+    "explanation": "This confirms matched constructor initialization, not equal subsequent policy trajectories under different algorithms."
+  },
+  "gae": {
+    "purpose": "Distinguish terminal, TimeLimit and rollout boundaries; prevent reset leakage and wrong bootstrap.",
+    "theoretical_expectation": "Natural terminal suppresses next-state value; TimeLimit uses final-observation value but stops carry across reset; rollout slice bootstraps without fabricating termination.",
+    "method": "Compare production backward GAE to hand numbers and independently summed residuals; vary gamma/lambda and terminal masks.",
+    "gamma": 0.95,
+    "gae_lambda": 0.9,
+    "cases": [
+      {
+        "name": "natural_terminal",
+        "rewards": [
+          1.0,
+          2.0
+        ],
+        "values": [
+          0.5,
+          0.8
+        ],
+        "next_values": [
+          0.8,
+          1.2
+        ],
+        "terminated": [
+          false,
+          true
+        ],
+        "truncated": [
+          false,
+          false
+        ],
+        "expected": [
+          2.286,
+          1.2
+        ],
+        "actual_advantage": [
+          2.286,
+          1.2
+        ],
+        "actual_value_target": [
+          2.786,
+          2.0
+        ],
+        "max_absolute_error": 0.0
+      },
+      {
+        "name": "time_limit_truncation",
+        "rewards": [
+          1.0,
+          2.0
+        ],
+        "values": [
+          0.5,
+          0.8
+        ],
+        "next_values": [
+          0.8,
+          1.2
+        ],
+        "terminated": [
+          false,
+          false
+        ],
+        "truncated": [
+          false,
+          true
+        ],
+        "expected": [
+          3.2607,
+          2.34
+        ],
+        "actual_advantage": [
+          3.2607,
+          2.34
+        ],
+        "actual_value_target": [
+          3.7607,
+          3.1399999999999997
+        ],
+        "max_absolute_error": 0.0
+      },
+      {
+        "name": "ongoing_rollout_slice",
+        "rewards": [
+          1.0,
+          2.0
+        ],
+        "values": [
+          0.5,
+          0.8
+        ],
+        "next_values": [
+          0.8,
+          1.2
+        ],
+        "terminated": [
+          false,
+          false
+        ],
+        "truncated": [
+          false,
+          false
+        ],
+        "expected": [
+          3.2607,
+          2.34
+        ],
+        "actual_advantage": [
+          3.2607,
+          2.34
+        ],
+        "actual_value_target": [
+          3.7607,
+          3.1399999999999997
+        ],
+        "max_absolute_error": 0.0
+      },
+      {
+        "name": "truncation_blocks_next_episode_carry",
+        "rewards": [
+          1.0,
+          2.0,
+          100.0
+        ],
+        "values": [
+          0.5,
+          0.8,
+          10.0
+        ],
+        "next_values": [
+          0.8,
+          1.2,
+          20.0
+        ],
+        "terminated": [
+          false,
+          false,
+          false
+        ],
+        "truncated": [
+          false,
+          true,
+          false
+        ],
+        "expected": [
+          3.2607,
+          2.34,
+          109.0
+        ],
+        "actual_advantage": [
+          3.2607,
+          2.34,
+          109.0
+        ],
+        "actual_value_target": [
+          3.7607,
+          3.1399999999999997,
+          119.0
+        ],
+        "max_absolute_error": 0.0
+      },
+      {
+        "name": "terminal_blocks_bootstrap_and_next_episode",
+        "rewards": [
+          1.0,
+          2.0,
+          100.0
+        ],
+        "values": [
+          0.5,
+          0.8,
+          10.0
+        ],
+        "next_values": [
+          0.8,
+          1.2,
+          20.0
+        ],
+        "terminated": [
+          false,
+          true,
+          false
+        ],
+        "truncated": [
+          false,
+          false,
+          false
+        ],
+        "expected": [
+          2.286,
+          1.2,
+          109.0
+        ],
+        "actual_advantage": [
+          2.286,
+          1.2,
+          109.0
+        ],
+        "actual_value_target": [
+          2.786,
+          2.0,
+          119.0
+        ],
+        "max_absolute_error": 0.0
+      },
+      {
+        "name": "both_terminal_and_truncated",
+        "rewards": [
+          2.0
+        ],
+        "values": [
+          0.8
+        ],
+        "next_values": [
+          100.0
+        ],
+        "terminated": [
+          true
+        ],
+        "truncated": [
+          true
+        ],
+        "expected": [
+          1.2
+        ],
+        "actual_advantage": [
+          1.2
+        ],
+        "actual_value_target": [
+          2.0
+        ],
+        "max_absolute_error": 0.0
+      }
+    ],
+    "lambda1_mc_target_max_absolute_error": 0.0,
+    "explanation": "Identical final targets for a two-step truncation and slice are intentional: both bootstrap, but a truncation additionally blocks any later reset episode from entering the same recursion."
+  },
+  "clipping": {
+    "purpose": "Verify asymmetric clipping for positive and negative advantages.",
+    "theoretical_expectation": "Positive-A improvements saturate above ratio1.2; negative-A improvements saturate below ratio.8. Harmful changes on the opposite side remain penalized.",
+    "method": "Float64 autograd on six hand-computable one-transition surrogates; compare loss and derivative with respect to new log probability.",
+    "clip_ratio": 0.2,
+    "cases": [
+      {
+        "advantage": 2.0,
+        "ratio": 0.5,
+        "actual_loss": -1.0,
+        "expected_loss": -1.0,
+        "gradient_wrt_new_log_probability": -1.0,
+        "expected_gradient": -1.0
+      },
+      {
+        "advantage": 2.0,
+        "ratio": 1.0,
+        "actual_loss": -2.0,
+        "expected_loss": -2.0,
+        "gradient_wrt_new_log_probability": -2.0,
+        "expected_gradient": -2.0
+      },
+      {
+        "advantage": 2.0,
+        "ratio": 1.5,
+        "actual_loss": -2.4,
+        "expected_loss": -2.4,
+        "gradient_wrt_new_log_probability": 0.0,
+        "expected_gradient": 0.0
+      },
+      {
+        "advantage": -2.0,
+        "ratio": 0.5,
+        "actual_loss": 1.6,
+        "expected_loss": 1.6,
+        "gradient_wrt_new_log_probability": 0.0,
+        "expected_gradient": 0.0
+      },
+      {
+        "advantage": -2.0,
+        "ratio": 1.0,
+        "actual_loss": 2.0,
+        "expected_loss": 2.0,
+        "gradient_wrt_new_log_probability": 2.0,
+        "expected_gradient": 2.0
+      },
+      {
+        "advantage": -2.0,
+        "ratio": 1.5,
+        "actual_loss": 3.0,
+        "expected_loss": 3.0,
+        "gradient_wrt_new_log_probability": 3.0,
+        "expected_gradient": 3.0
+      }
+    ],
+    "explanation": "Clipping is not a universal ratio clamp: the minimum with signed advantage is essential. At ratio1 both signs retain the ordinary score gradient."
+  },
+  "first_update_and_critic": {
+    "purpose": "Connect PPO's first update and critic regression to independent gradient calculations.",
+    "theoretical_expectation": "At old=new policy, clipped surrogate has the ordinary advantage-weighted score gradient. A critic with V=.5,target2 has d(.5*MSE)/dV=-1.5; SGD .1 moves it to .65.",
+    "method": "One actual production optimize() step versus independent unclipped Adam update on four fixed states; detached-target checks; scalar critic SGD sign check.",
+    "first_update_actor_parameter_max_absolute_error": 0.0,
+    "reference_actor_gradient_squared_norm": 0.3646751046180725,
+    "initial_clip_fraction": 0.0,
+    "initial_approximate_kl": 0.0,
+    "advantage_gradient_is_none": true,
+    "value_target_gradient_is_none": true,
+    "critic_fixed_target_mse_before": 3.9953103065490723,
+    "critic_fixed_target_mse_after": 3.9790070056915283,
+    "scalar_critic_before": 0.5,
+    "scalar_critic_after": 0.6499999761581421,
+    "scalar_critic_expected_after": 0.65,
+    "scalar_critic_initial_value_loss": 1.125,
+    "explanation": "This tests the first on-policy step before clipping activates; repeated PPO epochs can later activate the clipped branches tested separately."
+  },
+  "checkpoint_resume": {
+    "purpose": "Verify exact continuation of actual CPU rollouts, Adam updates and incomplete training episodes, and exact final step-budget accounting.",
+    "theoretical_expectation": "Restoring actor, critic, both optimizers, lane observations/physical states/TimeLimit counts/action RNGs, shuffle RNG and torch RNG reproduces the next rollout and update. Total143 requires rollouts64,64,15.",
+    "method": "Tiny actual CartPole rollouts; serialize production snapshot() to a temporary file; create a new collector/models/optimizers and restore; compare all next-rollout tensors, completed episode records, parameters and optimizer states.",
+    "train_seed_base": 76200000,
+    "num_envs": 3,
+    "rollout_lengths": [
+      64,
+      64,
+      15
+    ],
+    "final_environment_steps": 143,
+    "requested_environment_steps": 143,
+    "ongoing_episode_lengths_at_first_checkpoint": [
+      22,
+      21,
+      2
+    ],
+    "first_rollout_complete_episodes": 1,
+    "next_rollout_complete_episodes": 1,
+    "final_partial_rollout_complete_episodes": 2,
+    "all_completed_episode_lengths": [
+      19,
+      16,
+      45,
+      12
+    ],
+    "total_completed_episode_steps": 92,
+    "final_ongoing_episode_lengths": [
+      49,
+      2,
+      0
+    ],
+    "completed_plus_ongoing_steps": 143,
+    "reset_at_rollout_boundary_next_episode_first_sampling_update": 5,
+    "reset_at_rollout_boundary_next_episode_first_global_step": 1,
+    "rollout_tensors_exactly_equal": true,
+    "complete_episode_records_exactly_equal": true,
+    "restored_collector_state_exactly_equal": true,
+    "actor_parameter_max_absolute_error": 0.0,
+    "critic_parameter_max_absolute_error": 0.0,
+    "both_adam_states_exactly_equal": true,
+    "shuffle_rng_exactly_equal": true,
+    "final_partial_rollout_actor_gradient_steps": 2,
+    "advantage_normalized_mean": 9.313225746154785e-09,
+    "advantage_normalized_population_sd": 1.0,
+    "explanation": "Unfinished episodes are preserved across rollouts and checkpoints, not counted as completed episodes. These short validation rollouts are not formal training or held-out performance evaluation."
+  },
+  "train_loop_resume": {
+    "purpose": "Verify actual train() interruption/resume and log-commit rollback end to end, beyond manually restoring snapshots.",
+    "theoretical_expectation": "Uninterrupted143 steps and stopping after update1 then resuming produce identical final numerical state and complete-episode logs; a log tail newer than the committed checkpoint is discarded.",
+    "method": "Two tiny CPU train() runs in a temporary directory, same seed763 and64-step rollouts across3 lanes; copy actual update2 log rows ahead of the stopped checkpoint to emulate a crash window; resume and compare final state and non-timing episode logs.",
+    "interruption_update": 1,
+    "interruption_environment_steps": 64,
+    "injected_uncommitted_episode_rows": 2,
+    "injected_uncommitted_update_rows": 1,
+    "compared_final_state_keys": [
+      "config",
+      "model",
+      "critic",
+      "optimizer",
+      "critic_optimizer",
+      "collector",
+      "shuffle_rng_state",
+      "torch_rng_state",
+      "updates",
+      "steps",
+      "episode",
+      "baseline",
+      "gradient_steps"
+    ],
+    "all_compared_final_state_exactly_equal": true,
+    "actor_parameter_max_absolute_error": 0.0,
+    "critic_parameter_max_absolute_error": 0.0,
+    "complete_episode_logs_equal_excluding_elapsed": true,
+    "complete_episode_ids": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "complete_episode_rewards": [
+      16.0,
+      18.0,
+      19.0,
+      14.0,
+      18.0,
+      12.0
+    ],
+    "complete_episode_lengths": [
+      16,
+      18,
+      19,
+      14,
+      18,
+      12
+    ],
+    "complete_episode_seeds": [
+      76300002,
+      76300001,
+      76300000,
+      76300003,
+      76300005,
+      76300007
+    ],
+    "logged_update_ids": [
+      1,
+      2,
+      3
+    ],
+    "rollout_steps": [
+      64,
+      64,
+      15
+    ],
+    "final_environment_steps": 143,
+    "final_complete_episode_count": 6,
+    "final_ongoing_episode_lengths": [
+      0,
+      29,
+      17
+    ],
+    "no_duplicate_or_missing_episode_records": true,
+    "no_duplicate_or_missing_update_records": true,
+    "explanation": "The log tail is synthetic crash simulation copied from real transient rollout rows. It is excluded from final output and formal experimental records. Temporary runs and checkpoints are deleted automatically; existing formal checkpoints are never opened for writing."
+  },
+  "elapsed_seconds": 0.9505967920413241
+}

@@ -1,0 +1,19 @@
+{
+  "episode": 3324,
+  "steps": 1384029,
+  "updates": 676,
+  "gradient_steps": 54070,
+  "elapsed": 48.42646341701038,
+  "steps_per_second": 28580.013949848813,
+  "process_peak_rss_bytes": 310460416,
+  "ongoing_episode_lengths": [
+    118,
+    163,
+    306,
+    378,
+    311,
+    482,
+    25,
+    21
+  ]
+}

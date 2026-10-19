@@ -1,0 +1,1 @@
+{"evaluation": "runs/ppo_comparison_eval/cartpole_baseline", "n": 500, "mean": 419.182, "std_sample": 83.47726507000056}

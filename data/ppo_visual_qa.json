@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "plots": [
+    {
+      "file": "figures/ppo_comparison_evaluation.png",
+      "sha256": "a322f1cad6fc029947df86fecb9010547e4411855b8193013eaef1cc49ebf3ed",
+      "visually_examined": true
+    },
+    {
+      "file": "figures/ppo_comparison_paired_differences.png",
+      "sha256": "6eb77a567186470868335eade03ab3cfc5dec45a4783b2a56ebf54dac70058f6",
+      "visually_examined": true
+    },
+    {
+      "file": "figures/ppo_comparison_training.png",
+      "sha256": "a0f003d58e4332f3fed807e09288d0c61b409d394c481ecfc6c969e26fdb46d8",
+      "visually_examined": true
+    }
+  ],
+  "notes": "All three figures individually inspected: complete-episode training reward and growing/trailing100 mean versus actual interaction count; shared evaluation histogram bins/axes and all500 rows; paired difference distributions, means and bootstrap interval labels readable. Statistics match independently recomputed raw CSVs. No clipping or overlapping labels.",
+  "original_scientific_artifacts_unchanged": 20
+}

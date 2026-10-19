@@ -1,0 +1,20 @@
+
+Fontconfig error: No writable cache directories
+	/opt/homebrew/var/cache/fontconfig
+	/Users/sunyujun03/.cache/fontconfig
+	/Users/sunyujun03/.fontconfig
+Matplotlib is building the font cache; this may take a moment.
+{
+  "complete": true,
+  "evaluation_episodes": {
+    "cartpole_basic": 500,
+    "cartpole_baseline": 500,
+    "cartpole_ppo": 500
+  },
+  "training_steps": {
+    "cartpole_basic": 1384029,
+    "cartpole_baseline": 1290047,
+    "cartpole_ppo": 1384029
+  },
+  "output": "data/ppo_comparison_summary.json"
+}

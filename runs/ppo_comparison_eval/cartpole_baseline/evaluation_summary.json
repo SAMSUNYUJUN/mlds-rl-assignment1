@@ -1,0 +1,20 @@
+{
+  "n": 500,
+  "mean": 419.182,
+  "std_sample": 83.47726507000056,
+  "std_population": 83.39374602450714,
+  "min": 153.0,
+  "max": 500.0,
+  "mean_length": 419.182,
+  "terminated": 319,
+  "truncated": 183,
+  "both_terminated_and_truncated": 2,
+  "env_steps": 209591,
+  "checkpoint_sha256": "e9013dc7778708a608e5f274d7f264527838a39e48f0c226a3251b5e36bd2f39",
+  "eval_seed_base": 84000000,
+  "sampling": "categorical via independent per-episode NumPy RNG",
+  "device": "cpu",
+  "elapsed_seconds": 1.2068722079275176,
+  "cap_500_count": 183,
+  "time_limit_only": 181
+}

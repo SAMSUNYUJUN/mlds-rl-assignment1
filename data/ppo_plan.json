@@ -1,0 +1,86 @@
+{
+  "status": "fixed_before_PPO_formal_training_and_new_evaluation",
+  "created_date": "2026-10-18 America/Chicago",
+  "branch": "codex/cartpole-ppo-comparison",
+  "parent_commit": "5113b9445796e27997a7b17c455b99f32ba81775",
+  "host": "macOS-15.6.1-arm64-arm-64bit",
+  "machine": "arm64",
+  "scope": "CartPole extension; existing assignment report/data/checkpoints preserved",
+  "new_compute_cost": 0,
+  "configuration": {
+    "algorithm": "PPO-Clip",
+    "game": "cartpole",
+    "environment": "CartPole-v1",
+    "seed": 101,
+    "total_steps": 1384029,
+    "device": "cpu",
+    "hidden": 64,
+    "gamma": 0.95,
+    "gae_lambda": 0.95,
+    "clip_ratio": 0.2,
+    "actor_lr": 0.0003,
+    "critic_lr": 0.001,
+    "adam_eps": 1e-08,
+    "epochs": 10,
+    "minibatch_size": 256,
+    "rollout_steps": 2048,
+    "num_envs": 8,
+    "grad_clip": 0.5,
+    "entropy_coef": 0.0,
+    "normalize_advantage": true,
+    "advantage_std_ddof": 0,
+    "train_seed_base": 10100000,
+    "eval_seed_base": 80000000,
+    "action_sampling": "categorical via independent per-episode NumPy RNG",
+    "time_limit_bootstrap": true,
+    "observation_normalization": false,
+    "reward_normalization": false,
+    "value_loss": "0.5 * mean squared error",
+    "value_target": "unnormalized GAE advantage + frozen old state value",
+    "objective": "uniform-transition PPO clipped surrogate; no absolute gamma^t",
+    "termination": "natural failure or official 500-step TimeLimit",
+    "actor_initialization": "same Policy constructor and torch seed as REINFORCE"
+  },
+  "budget_reason": "Match original no-baseline REINFORCE environment steps exactly: 1384029; original constant-baseline run has 1290047 steps and is a descriptive comparator. Equal steps do not imply equal compute.",
+  "pilot": {
+    "run": "runs/pilot_ppo_speed",
+    "seed": 91,
+    "steps": 8192,
+    "purpose": "Execution/timing check excluded from final comparison; no final-evaluation tuning"
+  },
+  "selection": "Freeze final PPO at fixed step budget, no evaluation-based model selection. No learning-threshold early stopping.",
+  "fresh_evaluation": {
+    "source_runs": [
+      "cartpole_basic",
+      "cartpole_baseline",
+      "cartpole_ppo"
+    ],
+    "seed_base": 84000000,
+    "episodes_each": 500,
+    "action_rule": "stochastic categorical; same independent per-episode NumPy RNG protocol",
+    "statistics": "sample SD ddof=1; paired seed differences also saved"
+  },
+  "historical_comparability": {
+    "PPO_only_episodes": 500,
+    "seed_base": 80000000,
+    "note": "Original 80m outcomes already seen; primary new comparison uses fresh 84m seeds."
+  },
+  "method_differences": [
+    "PPO uniform-transition clipped surrogate has no absolute gamma^t; original REINFORCE uses episode-start-discount weighting.",
+    "PPO GAE and learned state critic versus original zero or prior-batch scalar EMA baseline.",
+    "PPO bootstraps on official TimeLimit final observations; original finite-episode Monte Carlo treats it as an endpoint.",
+    "PPO uses actor LR0.0003 versus REINFORCE0.01, advantage normalization, multiple minibatch epochs and gradient clipping0.5.",
+    "Actor architecture and initialization, raw observations, action space, environment cap, gamma and CPU match."
+  ],
+  "limits": "One training seed; descriptive algorithm/configuration comparison, no isolated causal claim about clipping or time weights.",
+  "pilot_measured": {
+    "actual_steps": 8192,
+    "rollouts": 4,
+    "completed_episodes": 347,
+    "seconds_excluding_import": 0.36712362500838935,
+    "steps_per_second": 22314.00934715874,
+    "peak_rss_bytes": 300367872,
+    "formal_runtime_estimate_seconds": 62.02511518514845,
+    "note": "Short timing/execution run only; episodes vary in length and full runtime may differ. A start-policy metadata label was corrected after this pilot; no algorithm hyperparameters changed."
+  }
+}

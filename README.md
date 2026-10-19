@@ -2,7 +2,7 @@
 
 Source of requirements: four-page `mlds_assignment1.pdf`. Actual execution host: Apple M4 Pro, 24 GB, macOS 15.6.1, native arm64 Python 3.12.14. All compute is local. See `CODEX_TASK.md`, `USER_CONTEXT.md`, `REQUIREMENTS.md` and `PROGRESS.md` for scope and current status.
 
-Each final model trained for 4,096 complete episodes and was frozen before its 500 held-out evaluation episodes. Actual results (raw undiscounted reward, sample SD with `ddof=1`):
+Each of the four original assignment models trained for 4,096 complete episodes and was frozen before its 500 held-out evaluation episodes. Actual results (raw undiscounted reward, sample SD with `ddof=1`):
 
 | Model | Evaluation episodes | Mean | Sample SD |
 |---|---:|---:|---:|
@@ -88,3 +88,42 @@ Replotting and report generation use saved data; no retraining is required. Repo
 ## Repository and submission
 
 Delivered repository: [SAMSUNYUJUN/mlds-rl-assignment1](https://github.com/SAMSUNYUJUN/mlds-rl-assignment1), branch `main`. The user explicitly authorized the push, and the source commit was verified against the GitHub API. Identity comes from the actual origin and authenticated `gh api user`, not `git user.name`. Initial sandboxed `gh auth status` misleadingly reported an invalid token; outside the network sandbox authentication succeeded. Authorization and delivery evidence are in `data/repository.json` and `ACCEPTANCE.md`. The user performs the final Canvas submission.
+
+## CartPole PPO extension
+
+The `codex/cartpole-ppo-comparison` branch adds a self-written PPO-Clip experiment
+alongside the frozen assignment REINFORCE runs. It uses the same actor architecture,
+raw observations, gamma 0.95 and CPU. Its fixed 1,384,029 environment-step budget
+matches the original no-baseline REINFORCE run. PPO additionally uses a state-value
+critic, GAE, normalized advantages and multiple minibatch epochs; this is an
+algorithm/configuration comparison, not an isolated clipping ablation. The original
+submission PDF remains unchanged. See [comparison](docs/PPO_COMPARISON.md) and
+the preregistered configuration in `data/ppo_plan.json`.
+
+Fresh paired evaluation (500 full sampled episodes each, seeds 84000000–84000499, sample SD):
+
+| Method | Mean reward | Sample SD |
+|---|---:|---:|
+| REINFORCE, no baseline |142.464|120.310|
+| REINFORCE + EMA baseline |419.182|83.477|
+| PPO + state critic / GAE |500.000|0.000|
+
+PPO reached the 500-step cap in all 500 fresh evaluation episodes. This is one
+training seed; PPO also uses more optimization work and different estimator
+conventions. See the comparison document for the full limits and raw evidence.
+
+```sh
+# Quantitative estimator, clipping, critic and full checkpoint/collector checks
+.venv/bin/python -m src.validate_ppo
+# Train or resume; final-only freeze at the fixed interaction budget
+caffeinate -i .venv/bin/python -u -m src.ppo train --run runs/cartpole_ppo
+# Historical seed protocol, 500 complete episodes
+.venv/bin/python -m src.ppo evaluate --run runs/cartpole_ppo --episodes 500
+# New paired seed protocol, 500 complete episodes for each frozen policy
+for run in cartpole_basic cartpole_baseline cartpole_ppo; do
+  .venv/bin/python -m src.ppo evaluate --run runs/$run \
+    --output runs/ppo_comparison_eval/$run --episodes 500 --eval-seed-base 84000000
+done
+# Regenerate comparison plots/statistics/discussion from saved data only
+.venv/bin/python -m src.compare_ppo
+```

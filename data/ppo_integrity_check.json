@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "original_artifact_hashes_unchanged": 20,
+  "fresh_paired_evaluations": [
+    {
+      "run": "cartpole_basic",
+      "complete_episodes": 500,
+      "mean": 142.464,
+      "sample_sd": 120.30975679120259
+    },
+    {
+      "run": "cartpole_baseline",
+      "complete_episodes": 500,
+      "mean": 419.182,
+      "sample_sd": 83.47726507000056
+    },
+    {
+      "run": "cartpole_ppo",
+      "complete_episodes": 500,
+      "mean": 500.0,
+      "sample_sd": 0.0
+    }
+  ],
+  "training_steps": 1384029,
+  "complete_training_episodes": 3324,
+  "ongoing_episode_steps": 1804,
+  "rollout_updates": 676,
+  "last_rollout_steps": 1629,
+  "actor_gradient_steps": 54070,
+  "critic_gradient_steps": 54070,
+  "rollout_updates_with_nonzero_mean_clip_fraction": 659,
+  "mean_recorded_clip_fraction": 0.032468519997090224,
+  "max_recorded_clip_fraction": 0.297509765625,
+  "timing_seconds": 48.42646341701038,
+  "peak_process_rss_bytes": 310460416,
+  "interpretation": "Clip diagnostics average pre-update minibatch observations over epochs, not final full-rollout policy statistics. Single training seed; reward SD is not gradient variance."
+}

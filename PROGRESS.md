@@ -1,6 +1,6 @@
 # Progress and recovery
 
-Updated: 2026-10-17, America/Chicago.
+Updated: 2026-10-18, America/Chicago.
 
 ## Completed local scientific work
 
@@ -55,3 +55,28 @@ For an actually unfinished future training run, the driver supports update-bound
 ## Report editorial revision (2026-10-17)
 
 Removed task-material inspection, deadlines/timezone, authentication/API checks, permission and delivery narration from the academic report. Preserved methods, results, quantitative validation, reproducibility, required repository identity/link and explicit performance limitations. Rebuilt the 16-page PDF from saved data and visually inspected every page. No experiments or checkpoints changed. Current PDF SHA-256: a05f49e547e6e4d280b3b9d2679f1393b25aec979b894880b77c05b64f741474.
+
+## PPO extension (2026-10-18, complete)
+
+- Branch: `codex/cartpole-ppo-comparison`, based on main `5113b94`. Self-written PPO-Clip in `src/ppo.py`, state critic/GAE and update-boundary exact environment/optimizer/RNG recovery. Plan/config fixed before formal training in `data/ppo_plan.json`.
+- Pilot8192 steps excluded from formal training/evaluation. Formal PPO CPU budget completed exactly1,384,029 interactions, matching original basic REINFORCE. Completed3,324 training episodes account for1,382,225 steps; eight unfinished episodes account for1,804 steps. Rollout slices are not logged as completed episodes.676 rollout updates,54,070 actor and54,070 critic optimizer steps. Logged elapsed48.426s, peakRSS310,460,416 bytes.
+- Final-only checkpoint `runs/cartpole_ppo/final.pt`, SHA256 `8bf35c1067e785e910faddb1d8ab1f92718de55aa4b39618ff1715fd67d641eb`. Frozen at budget before evaluation; no evaluation-based selection.
+- Historical protocol: PPO500 complete sampled episodes at seeds80m, mean500/sampleSD0. Primary new paired protocol: allthree frozen policies500 complete sampled episodes each at seeds84000000..84000499. Basic142.464/120.3097568; EMA419.182/83.4772651; PPO500/0. PPO reaches500-step cap in all500 new evaluation episodes. Totalnew evaluation episodes2,000.
+- Independent validation: sixGAE cases, six signedclip derivative cases, exactinitialactor matching, exactfirstAdam actor update, critic regression direction, and both snapshot and actualtrain-loop interruption/resume equivalence. Actor/critic parametererrors0; crash-window log trimming prevents duplicateepisodes. Evidence `data/validation/ppo.json`.
+- Integrity check recomputes rawmeans/SDs, exactbudget/remainingrollout/optimizercounts and confirms all20 original scientific artifacts unchanged: `data/ppo_integrity_check.json`, `data/ppo_original_artifacts.json`. Original assignmentPDF SHA remains `a05f49e547e6e4d280b3b9d2679f1393b25aec979b894880b77c05b64f741474`.
+- Comparison outputs: `docs/PPO_COMPARISON.md`, `data/ppo_comparison_summary.json`, three `figures/ppo_comparison_*.png`. Allthree plots visually checked. Original report, models and rawlogs remain unchanged. Main assignment package remains its original delivery packet; PPO is documented separately on this branch.
+- Limits: one training seed; baseline REINFORCE used1,290,047 steps (not exactlymatched). PPO simultaneously changes critic/GAE, learningrates, normalization, minibatchreuse, uniformtransition weighting and TimeLimit bootstrap. Results do not isolate clipping or timeweighting as solecause. Equalenvironmentsteps do not mean equalcompute.
+
+No PPO training/evaluation process remains active. Native training PID21544 completed; historical process.json records are not live-process evidence. PPO logs: `logs/cartpole_ppo_train.log`, `logs/cartpole_ppo_evaluate_historical.log`, `logs/ppo_compare_*_evaluate.log`.
+
+Reproduction/recovery commands (completed runs resume/skip safely; do not delete frozen manifests):
+
+```sh
+.venv/bin/python -m src.validate_ppo
+caffeinate -i .venv/bin/python -u -m src.ppo train --run runs/cartpole_ppo
+.venv/bin/python -m src.ppo evaluate --run runs/cartpole_ppo --episodes 500
+for run in cartpole_basic cartpole_baseline cartpole_ppo; do
+  .venv/bin/python -m src.ppo evaluate --run runs/$run --output runs/ppo_comparison_eval/$run --episodes 500 --eval-seed-base 84000000
+done
+.venv/bin/python -m src.compare_ppo
+```

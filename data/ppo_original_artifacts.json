@@ -1,0 +1,22 @@
+{
+  "src/rl.py": "b779bd085482b8717901a36374ae04ad0c627fd7aceeace1a2c5724eca54ef1f",
+  "src/build_report.py": "7fb7ed5a07dce6b32601b70fd204f8ebfc5d1554f5e6c1f7579f952d11725824",
+  "docs/report.md": "1419e6b182977b7f926a8a14a8f98d8f5a2e5013f41aa848afbecb013fbfb88b",
+  "output/pdf/assignment1_report.pdf": "a05f49e547e6e4d280b3b9d2679f1393b25aec979b894880b77c05b64f741474",
+  "runs/cartpole_basic/final.pt": "e488f799b850759c62943386dc9815cfb9d3e51e2a8887616a2b70a69e859510",
+  "runs/cartpole_basic/FROZEN.json": "916ab86eea6dfc0689e61e0d7bfcb7584414cf094bfc70ddaa5f9dce7369524e",
+  "runs/cartpole_basic/train.csv": "f07bdd2dad3b8b1ae07288b86105670665b6023e7b70e65a8cbf93d12aa36c78",
+  "runs/cartpole_basic/evaluation.csv": "d00735111a1f1e532a02a866a937b1b7b20eec363f07316dd7b3b695e2eb8e5e",
+  "runs/cartpole_baseline/final.pt": "e9013dc7778708a608e5f274d7f264527838a39e48f0c226a3251b5e36bd2f39",
+  "runs/cartpole_baseline/FROZEN.json": "fc8eb8263de3814d00cf912ca3497e164e586712755927e27c5eb8b532f13ea3",
+  "runs/cartpole_baseline/train.csv": "cffc994844bdb4b79d094635d612222d3f9a1c3ff272617b678146a871d3449d",
+  "runs/cartpole_baseline/evaluation.csv": "f6fb7ba10559242876827279e62801b2608f2f67e0dd369b8942619195396ade",
+  "runs/pong_basic/final.pt": "ae76d5870ae51f9f31c69ec8d68a58072992b2d538be83479f70c9230d4dd5ab",
+  "runs/pong_basic/FROZEN.json": "aac40be8b7b85d055b4f1b2d05f0d00854ed453d54733ecfc978b7158f70d326",
+  "runs/pong_basic/train.csv": "257c72dff106b7efabbe0ae0486da0b38b6ed9093ab64a8dd981a9112bd83fbe",
+  "runs/pong_basic/evaluation.csv": "ba2283834ce77b07f852e6373b41e15bbf5acb5fb770eed4d91704903ec4ef72",
+  "runs/pong_baseline/final.pt": "2e6c774ed443eeb5a3858277e08fc1669a345bbe9825858a5f0c701649d82a4f",
+  "runs/pong_baseline/FROZEN.json": "e09fb5905ace5fced83c4377eeb231629a0044c4222160df5e5529b15f25d5ec",
+  "runs/pong_baseline/train.csv": "b830a7eaca9b4fe64f0873ee6c51c9e7fa63cb41d6a254cc5c5d3cb428f22643",
+  "runs/pong_baseline/evaluation.csv": "5a98b1cd569e1a6243b4620e16d3502712d46b68b768e74ffcc02c1d3df7e4a8"
+}
